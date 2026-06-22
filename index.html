@@ -1,0 +1,4883 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>关务管理系统 · 产品需求文档 v1.10</title>
+<style>
+  :root {
+    --bg: #fafbfc;
+    --card-bg: #ffffff;
+    --text: #1a1a2e;
+    --text-secondary: #4a5568;
+    --border: #e2e8f0;
+    --accent: #2563eb;
+    --accent-light: #eff6ff;
+    --warning: #d97706;
+    --warning-bg: #fffbeb;
+    --danger: #dc2626;
+    --danger-bg: #fef2f2;
+    --success: #059669;
+    --code-bg: #1e293b;
+    --code-text: #e2e8f0;
+    --table-stripe: #f8fafc;
+    --table-hover: #f1f5f9;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+    font-size: 15px;
+  }
+  .top-bar {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+  .top-bar .doc-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .top-bar .version-badge {
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+  .container {
+    display: flex;
+    max-width: 1280px;
+    margin: 0 auto;
+    min-height: calc(100vh - 49px);
+  }
+  .sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: #fff;
+    border-right: 1px solid var(--border);
+    padding: 24px 20px;
+    position: sticky;
+    top: 49px;
+    height: calc(100vh - 49px);
+    overflow-y: auto;
+    font-size: 13px;
+  }
+  .sidebar h3 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .sidebar ul { list-style: none; padding: 0; }
+  .sidebar li { margin-bottom: 3px; }
+  .sidebar a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    display: block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.15s;
+  }
+  .sidebar a:hover {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+  .sidebar .sub { padding-left: 16px; font-size: 12px; }
+  .content {
+    flex: 1;
+    padding: 32px 48px 64px;
+    max-width: 900px;
+    min-width: 0;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 16px 0 8px;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border);
+  }
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 40px 0 16px;
+    color: #1e293b;
+    padding-left: 12px;
+    border-left: 4px solid var(--accent);
+  }
+  h3 { font-size: 18px; font-weight: 600; margin: 28px 0 12px; color: #334155; }
+  h4 { font-size: 16px; font-weight: 600; margin: 20px 0 8px; color: #475569; }
+  h5 { font-size: 14px; font-weight: 600; margin: 16px 0 6px; color: #64748b; }
+  p { margin: 8px 0; color: var(--text-secondary); }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  blockquote {
+    margin: 12px 0;
+    padding: 12px 16px;
+    background: var(--warning-bg);
+    border-left: 4px solid var(--warning);
+    border-radius: 0 6px 6px 0;
+    color: #92400e;
+    font-size: 14px;
+  }
+  blockquote p { margin: 4px 0; color: inherit; }
+  pre {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 16px 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 12px 0;
+    font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", "Monaco", monospace;
+    white-space: pre-wrap;
+  }
+  pre code { background: none; padding: 0; color: inherit; }
+  code {
+    background: #f1f5f9;
+    color: #e11d48;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", "Monaco", monospace;
+  }
+  pre code { color: #e2e8f0; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+  .table-wrapper {
+    overflow-x: auto;
+    margin: 16px 0;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  thead { background: #f8fafc; border-bottom: 2px solid var(--border); }
+  th {
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    color: #475569;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  td { padding: 8px 14px; border-bottom: 1px solid #f1f5f9; color: var(--text-secondary); }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--table-hover); }
+  tbody tr:nth-child(even) { background: var(--table-stripe); }
+  tbody tr:nth-child(even):hover { background: var(--table-hover); }
+  ul, ol { margin: 8px 0; padding-left: 24px; color: var(--text-secondary); }
+  li { margin: 4px 0; }
+  strong { color: #0f172a; }
+  @media (max-width: 1024px) {
+    .sidebar { display: none; }
+    .content { padding: 24px 20px 48px; }
+  }
+  @media print {
+    .sidebar, .top-bar { display: none; }
+    .content { max-width: 100%; padding: 0; }
+    body { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <span class="doc-title">&iexcl;&frac12;&raquo;务管理系统 · 产品需求文档</span>
+  <span class="version-badge">v1.10</span>
+  <span style="margin-left:auto;font-size:12px;color:#94a3b8;">井太兰进出口有限公司</span>
+</div>
+<div class="container">
+  <nav class="sidebar" id="sidebar">
+    <h3>目录</h3>
+    <div id="toc"></div>
+  </nav>
+  <main class="content">
+<h1 id="_1">关务管理系统 · 产品需求文档</h1>
+<p><strong>版本：</strong> v1.10 Draft<br />
+<strong>日期：</strong> 2026-06-16<br />
+<strong>编制：</strong> 井太蘭進出口有限公司<br />
+<strong>文档状态：</strong> 草稿，待评审</p>
+<blockquote>
+<p><strong>v1.10 更新内容</strong>：增强3.2.1收发货人表——境外收货人专有字段（国家/地区、境外税号VAT、联系人邮箱、银行信息、是否关联方）、动态表单（按主体类型切换字段集）、出口管制联动校验。新增3.2.3聚水潭客户→境外收货人映射逻辑（精确/模糊/手动三级匹配 + 客户-收货人关联表）。4.3节新增「客户名称」和「最终收货人」字段区分说明。2章架构图更新，7.2节境外收货人字段来源更新。</p>
+</blockquote>
+<hr />
+<h2 id="_2">目录</h2>
+<ol>
+<li><a href="#1-项目概述">项目概述</a></li>
+<li><a href="#2-系统架构概览">系统架构概览</a></li>
+<li><a href="#3-基础数据维护模块">基础数据维护模块</a><br />
+   - 3.1 报关商品信息维护<ul>
+<li>3.1.1 HS编码版本管理</li>
+<li>3.2 收发货人 / 供应商维护</li>
+<li>3.2.1 收发货人表（含境外收货人专有字段）</li>
+<li>3.2.2 供应商维护表</li>
+<li>3.2.3 聚水潭客户 → 境外收货人映射</li>
+<li>3.3 贸易参数维护</li>
+<li>3.4 申报价公式配置</li>
+<li>3.5 国内运费维护</li>
+<li>3.5.1 国际运费/保费/杂费配置</li>
+<li>3.6 INCOTERMS 与报关映射</li>
+<li>3.7 唛头管理</li>
+</ul>
+</li>
+<li><a href="#4-聚水潭对接模块">聚水潭对接模块</a><br />
+   - 4.2 选单筛选项（含筛选面板+数据来源+订单列表+约束）<br />
+   - 4.3 从聚水潭同步的字段<br />
+   - 4.4 装箱清单表（仓库简易装箱清单）<br />
+   - 4.5 运输方式确认（批次级手动指定）<br />
+   - 4.6 物流单证录入（集装箱/提单）</li>
+<li><a href="#5-申报合并规则引擎">申报合并规则引擎</a></li>
+<li><a href="#6-合规检查模块">合规检查模块</a><br />
+   - 6.1 小规模纳税人逻辑<br />
+   - 6.2 合规检查项汇总<br />
+   - 6.3 双人复核机制（AEO认证要求）<br />
+   - 6.4 出口管制与品牌授权检查</li>
+<li><a href="#7-报关草单生成模块">报关草单生成模块</a><br />
+   - 7.1 操作流程<br />
+   - 7.2 报关草单核心字段（H2000完整105项映射）</li>
+<li><a href="#8-单证输出模块">单证输出模块</a><br />
+   - 8.0 模板策略 + 8.0.1 完整模板变量清单<br />
+   - 8.2.1 PACKING LIST生成逻辑（逐箱明细→合并显示清单→总计校验）<br />
+   - 8.5.1 增值税发票关联（退税三流）<br />
+   - 8.9 单一窗口对接方案</li>
+<li><a href="#9-状态流转设计">状态流转设计</a><br />
+   - 9.1 状态定义（含修改更正路径）<br />
+   - 9.2 状态变更日志（AEO增强）<br />
+   - 9.3 报关行协作流程</li>
+<li><a href="#10-校验规则汇总">校验规则汇总</a></li>
+<li><a href="#11-数据库关键表设计参考">数据库关键表设计（参考）</a></li>
+<li><a href="#12-开放问题与待确认事项">开放问题与待确认事项</a></li>
+<li><a href="#13-申报要素截断合规说明">申报要素截断合规说明</a></li>
+<li><a href="#14-申报行数50项全国统一查证">申报行数50项全国统一查证</a></li>
+<li><a href="#15-拆单逻辑推荐方案">拆单逻辑推荐方案</a></li>
+<li><a href="#16-部署方式推荐">部署方式推荐</a></li>
+<li><a href="#17-附录所有问题确认状态汇总">附录：所有问题确认状态汇总</a></li>
+<li><a href="#18-权限与安全模型">权限与安全模型</a></li>
+</ol>
+<hr />
+<h2 id="1">1. 项目概述</h2>
+<h3 id="11">1.1 背景与目标</h3>
+<p>本系统旨在打通聚水潭 ERP 与出口报关业务流程，实现从内部订单号到一整套单证的自动化生成，消除人工填报造成的错误与重复劳动。</p>
+<p><strong>核心目标：</strong><br />
+- 根据聚水潭内部订单号（支持多选，须同一目的国）自动填制报关草单<br />
+- 同步输出 8 类单证，保证"三流一致"（合同流、货物流、资金流）<br />
+- 内置合规检查，拦截小规模纳税人风险订单<br />
+- 提供灵活的申报合并规则，自动校验海关字符与行数限制</p>
+<h3 id="12">1.2 单证输出清单</h3>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>单证名称</th>
+<th>份数</th>
+<th>模板策略</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>出口报关</td>
+<td>中华人民共和国出口报关草单</td>
+<td>1</td>
+<td><strong>A组-标准</strong></td>
+<td>对接海关H2000格式，自动生成</td>
+</tr>
+<tr>
+<td>出口报关</td>
+<td>装箱单（Packing List）</td>
+<td>1</td>
+<td><strong>A组-标准</strong></td>
+<td>中英双语，从简易装箱清单+合并数据自动生成</td>
+</tr>
+<tr>
+<td>出口报关</td>
+<td>出口发票（Export Invoice）</td>
+<td>1</td>
+<td><strong>A组-标准</strong></td>
+<td>申报价格口径</td>
+</tr>
+<tr>
+<td>出口报关</td>
+<td>销售合同（Sales Contract）</td>
+<td>1</td>
+<td><strong>A组-标准</strong></td>
+<td>国际贸易合同，内置多版本模板</td>
+</tr>
+<tr>
+<td>国内配套</td>
+<td>国内采购合同</td>
+<td>1</td>
+<td><strong>B组-自定义</strong></td>
+<td>上传 docx 模板或使用系统默认，配合退税三流</td>
+</tr>
+<tr>
+<td>国内配套</td>
+<td>入库单</td>
+<td>1</td>
+<td><strong>B组-自定义</strong></td>
+<td>上传模板或默认格式</td>
+</tr>
+<tr>
+<td>国内配套</td>
+<td>关货单</td>
+<td>1</td>
+<td><strong>B组-自定义</strong></td>
+<td>上传模板或默认格式</td>
+</tr>
+<tr>
+<td>客户单证</td>
+<td>对外 INVOICE</td>
+<td>1</td>
+<td><strong>B组-自定义</strong></td>
+<td>上传客户指定模板或系统标准版，价格=申报价</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2">2. 系统架构概览</h2>
+<pre class="codehilite"><code>┌──────────────────────────────────────────────────────┐
+│                  基础数据层（字典维护）                  │
+│  报关商品表 │ 收发货人表(含境外收货人) │ 供应商表        │
+│  客户-收货人映射表 │ 贸易参数表 │ 申报价公式配置         │
+└────────────────────────┬─────────────────────────────┘
+                         │
+┌────────────────────────▼─────────────────────────────┐
+│                  业务处理层                             │
+│  聚水潭对接 → 客户-收货人映射 → 合并规则引擎            │
+│  → 合规检查(含出口管制) → 草单组装                      │
+└────────────────────────┬─────────────────────────────┘
+                         │
+┌────────────────────────▼─────────────────────────────┐
+│                  单证输出层                             │
+│  报关草单 │ 装箱单 │ 出口发票 │ 销售合同                │
+│  采购合同 │ 入库单 │ 关货单   │ 对外INVOICE             │
+└──────────────────────────────────────────────────────┘
+</code></pre>
+
+<hr />
+<h2 id="3">3. 基础数据维护模块</h2>
+<h3 id="31">3.1 报关商品信息维护表</h3>
+<p>商品信息是报关草单的核心来源，需提前备案并维护。</p>
+<p><strong>表结构字段：</strong></p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>字段名称</th>
+<th>类型</th>
+<th>说明</th>
+<th>必填</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>报备编号</td>
+<td>VARCHAR(32)</td>
+<td>系统自动生成</td>
+<td>-</td>
+</tr>
+<tr>
+<td>2</td>
+<td>审批状态</td>
+<td>ENUM</td>
+<td>待审核 / 已审批 / 已驳回</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>3</td>
+<td>咨询状态</td>
+<td>ENUM</td>
+<td>未咨询 / 已咨询 / 已确认</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>4</td>
+<td>海关编码（HS Code）</td>
+<td>VARCHAR(10)</td>
+<td>10位HS编码，不含空格</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>5</td>
+<td>商品中文名称</td>
+<td>VARCHAR(200)</td>
+<td>申报中文品名</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>6</td>
+<td>商品英文名称</td>
+<td>VARCHAR(200)</td>
+<td>用于英文单证</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>7</td>
+<td>申报要素</td>
+<td>TEXT</td>
+<td>海关申报要求填写的规格要素</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>8</td>
+<td>商品货号（款号）</td>
+<td>VARCHAR(100)</td>
+<td>对应款式编码</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>9</td>
+<td>商品规格</td>
+<td>VARCHAR(200)</td>
+<td>尺码/颜色等规格描述</td>
+<td></td>
+</tr>
+<tr>
+<td>10</td>
+<td>规格组</td>
+<td>VARCHAR(100)</td>
+<td>规格分组标识</td>
+<td></td>
+</tr>
+<tr>
+<td>11</td>
+<td>录入员</td>
+<td>VARCHAR(50)</td>
+<td>操作人姓名</td>
+<td>-</td>
+</tr>
+<tr>
+<td>12</td>
+<td>申请日期</td>
+<td>DATE</td>
+<td></td>
+<td>-</td>
+</tr>
+<tr>
+<td>13</td>
+<td>每件数量</td>
+<td>DECIMAL(10,4)</td>
+<td>单件/单箱数量</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>14</td>
+<td>每件毛重（kg）</td>
+<td>DECIMAL(10,4)</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>15</td>
+<td>每件净重（kg）</td>
+<td>DECIMAL(10,4)</td>
+<td></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>16</td>
+<td>体积（m³）</td>
+<td>DECIMAL(10,6)</td>
+<td>单件体积</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>17</td>
+<td>计量单位</td>
+<td>VARCHAR(10)</td>
+<td>双 / 件 / 个 / 套 等（法定第一单位）</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>18</td>
+<td>第二计量单位</td>
+<td>VARCHAR(10)</td>
+<td>千克 / 米 / 升 等（仅HS要求双单位时填写）</td>
+<td>条件</td>
+</tr>
+<tr>
+<td>19</td>
+<td>包装单位</td>
+<td>VARCHAR(10)</td>
+<td>箱 / 包 / 托 等</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>20</td>
+<td>业务商品编码</td>
+<td>VARCHAR(50)</td>
+<td>公司内部编码，用于对应聚水潭SKU</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>21</td>
+<td>备注</td>
+<td>TEXT</td>
+<td>补充说明</td>
+<td></td>
+</tr>
+<tr>
+<td>22</td>
+<td>参考退税率（%）</td>
+<td>DECIMAL(5,2)</td>
+<td>用于退税预估，不影响申报</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>业务规则：</strong><br />
+- 海关编码必须通过海关税则有效性校验<br />
+- 审批状态为「已审批」才可用于生成报关单<br />
+- 业务商品编码须与聚水潭 SKU 编码一一对应，作为关联主键</p>
+<h4 id="311-hs">3.1.1 HS编码版本管理</h4>
+<p>HS编码每年1月1日由WCO协调制度委员会更新，各国海关同步调整。中国海关通常在年初发布新版税则。</p>
+<p><strong>版本管理规则：</strong></p>
+<table>
+<thead>
+<tr>
+<th>规则</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>版本标记</td>
+<td>每条商品记录标记 <code>hs_version</code>（如"2022版""2027版"）</td>
+</tr>
+<tr>
+<td>废止标记</td>
+<td>海关停用的编码 → 系统标记"已废止"，不可用于新草单</td>
+</tr>
+<tr>
+<td>存量保留</td>
+<td>已生成的旧版草单保留原编码不变，仅标记"编码版本过期"提示</td>
+</tr>
+<tr>
+<td>拆分/合并</td>
+<td>一个旧编码拆分为多个新编码 → 系统提示受影响商品，需人工确认归属</td>
+</tr>
+<tr>
+<td>新编码引入</td>
+<td>管理员导入新版税则库后，系统自动列出可用新编码</td>
+</tr>
+</tbody>
+</table>
+<p><strong>年度更新流程：</strong></p>
+<pre class="codehilite"><code>1. 管理员导入新版本HS编码库（Excel/CSV）
+2. 系统自动比对：旧版 vs 新版
+   ├─ 废止的编码 → 标记 + 列出受影响商品清单
+   ├─ 拆分的编码 → 列出候选新编码
+   └─ 新增的编码 → 可供新商品备案使用
+3. 生成「HS编码变更影响报告」
+4. 关务主管逐商品确认调整
+5. 确认完毕 → 系统切换默认编码版本
+</code></pre>
+
+<p><strong>表结构调整</strong>：报关商品信息表（3.1）新增字段：<br />
+| 字段 | 类型 | 说明 |<br />
+|------|------|------|<br />
+| hs_version | VARCHAR(20) | 编码版本标识 |<br />
+| hs_status | ENUM | ACTIVE / DEPRECATED |</p>
+<hr />
+<h3 id="32">3.2 收发货人 / 供应商维护表</h3>
+<h4 id="321">3.2.1 收发货人表</h4>
+<blockquote>
+<p><strong>设计原则</strong>：表单字段根据「主体类型」动态切换。境内主体（发货人）展示中国公司字段，境外主体（收货人）展示境外企业字段。同一维护界面，字段集不同。</p>
+</blockquote>
+<p><strong>A. 通用字段（两者共有）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主体类型</td>
+<td>ENUM</td>
+<td><strong>发货人（出口商·境内）/ 海外收货人（境外）</strong></td>
+</tr>
+<tr>
+<td>企业中文名称</td>
+<td>VARCHAR(200)</td>
+<td>境外主体可填当地注册名，无则留空</td>
+</tr>
+<tr>
+<td>企业英文名称</td>
+<td>VARCHAR(200)</td>
+<td>境外主体必填（报关单境外收货人字段要求英文）</td>
+</tr>
+<tr>
+<td>地址（英文）</td>
+<td>TEXT</td>
+<td>境外主体必填（报关单填制要求）</td>
+</tr>
+<tr>
+<td>联系人</td>
+<td>VARCHAR(50)</td>
+<td></td>
+</tr>
+<tr>
+<td>联系电话</td>
+<td>VARCHAR(30)</td>
+<td></td>
+</tr>
+<tr>
+<td>状态</td>
+<td>ENUM</td>
+<td>启用 / 停用</td>
+</tr>
+</tbody>
+</table>
+<p><strong>B. 发货人专有字段（主体类型=发货人时显示并必填）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>统一社会信用代码</td>
+<td>VARCHAR(18)</td>
+<td>18位，境内企业必填</td>
+</tr>
+<tr>
+<td>海关注册编码</td>
+<td>VARCHAR(20)</td>
+<td>10位海关编码，如 <code>440316XXXX</code></td>
+</tr>
+<tr>
+<td>地址（中文）</td>
+<td>TEXT</td>
+<td>工商注册地址</td>
+</tr>
+<tr>
+<td>纳税人识别号</td>
+<td>VARCHAR(20)</td>
+<td>与统一社会信用代码一致时自动带入</td>
+</tr>
+</tbody>
+</table>
+<p><strong>C. 海外收货人专有字段（主体类型=海外收货人时显示）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>必填</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>国家/地区</strong></td>
+<td>VARCHAR(5)</td>
+<td>✅</td>
+<td>ISO 3166-1 alpha-2 代码（US/DE/GB等），下拉选择。<strong>与出口管制筛查联动</strong>——若国家在制裁清单中则标记 ⚠️</td>
+</tr>
+<tr>
+<td><strong>境外税号 / VAT</strong></td>
+<td>VARCHAR(30)</td>
+<td>选填</td>
+<td>欧盟 VAT / 美国 EIN / 英国 VAT 等。欧盟目的国时建议填写，便于客户清关</td>
+</tr>
+<tr>
+<td><strong>联系人邮箱</strong></td>
+<td>VARCHAR(100)</td>
+<td>选填</td>
+<td>境外收货人联系邮箱，用于自动发送报关文件</td>
+</tr>
+<tr>
+<td><strong>银行名称</strong></td>
+<td>VARCHAR(200)</td>
+<td>选填</td>
+<td>境外收货人开户银行（用于INVOICE/合同中的收款信息展示）</td>
+</tr>
+<tr>
+<td><strong>银行账号</strong></td>
+<td>VARCHAR(50)</td>
+<td>选填</td>
+<td>IBAN / Account Number</td>
+</tr>
+<tr>
+<td><strong>SWIFT Code</strong></td>
+<td>VARCHAR(11)</td>
+<td>选填</td>
+<td>国际汇款识别码</td>
+</tr>
+<tr>
+<td><strong>是否关联方</strong></td>
+<td>BOOLEAN</td>
+<td>✅</td>
+<td><strong>默认=否</strong>。若收货人与我司存在股权/控制关系，标记为「是」。关联方交易需遵循独立交易原则（Transfer Pricing），海关和税务局均会重点审查</td>
+</tr>
+<tr>
+<td>地址（中文）</td>
+<td>TEXT</td>
+<td>选填</td>
+<td>境外主体通常无中文地址，可留空</td>
+</tr>
+</tbody>
+</table>
+<p><strong>D. 动态表单逻辑：</strong></p>
+<pre class="codehilite"><code>当用户新增/编辑收发货人时：
+  选择「主体类型」= 发货人(出口商·境内)：
+    → 仅展示 A通用字段 + B发货人专有字段
+    → B区字段全部校验（统一社会信用代码格式、海关注册编码有效性）
+
+  选择「主体类型」= 海外收货人(境外)：
+    → 仅展示 A通用字段 + C海外收货人专有字段
+    → 国家/地区 与出口管制清单联动校验
+    → 是否关联方 默认为「否」，标记为「是」时弹出提示
+    → 银行信息非必填但建议填写（生成合同/INVOICE时自动代入）
+</code></pre>
+
+<p><strong>E. 出口管制联动校验：</strong></p>
+<pre class="codehilite"><code>海外收货人保存时：
+  1. 国家/地区 对照出口管制筛查清单（6.4.1节）
+  2. 命中制裁国家 → ⚠️ 红色标记「该国家/地区在制裁清单中，货物可能被限制出口」
+     → 状态强制设为「停用」，仅管理员可解除
+  3. 企业英文名称 对照 SDN / Entity List 模糊匹配
+  4. 命中 → ⚠️ 阻断保存，提示合规部门审查
+</code></pre>
+
+<p><strong>F. 境外收货人维护界面要求：</strong></p>
+<ul>
+<li>列表视图：显示所有收发货人，按「主体类型」分Tab（发货人 / 海外收货人）</li>
+<li>国家/地区列：展示国旗图标 + ISO代码 + 中文名称（如 🇺🇸 US 美国）</li>
+<li>是否关联方列：是 → 橙色标记 ⚠️，否 → 灰色 —</li>
+<li>支持模糊搜索：企业英文名称、国家/地区、联系人</li>
+<li>每个海外收货人可关联多个联系人（一对多），但报关单填制时取主联系人</li>
+</ul>
+<h4 id="322">3.2.2 供应商维护表</h4>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>供应商编码</td>
+<td>VARCHAR(50)</td>
+<td>与聚水潭供应商编码对应</td>
+</tr>
+<tr>
+<td>供应商名称（中文）</td>
+<td>VARCHAR(200)</td>
+<td></td>
+</tr>
+<tr>
+<td>供应商名称（英文）</td>
+<td>VARCHAR(200)</td>
+<td></td>
+</tr>
+<tr>
+<td>统一社会信用代码</td>
+<td>VARCHAR(18)</td>
+<td></td>
+</tr>
+<tr>
+<td>纳税人类型</td>
+<td>ENUM</td>
+<td><strong>一般纳税人 / 小规模纳税人</strong></td>
+</tr>
+<tr>
+<td>合规状态</td>
+<td>ENUM</td>
+<td><strong>合规 / 不合规 / 待确认</strong></td>
+</tr>
+<tr>
+<td>原产地</td>
+<td>VARCHAR(50)</td>
+<td>省份/城市，用于合并规则前提判断</td>
+</tr>
+<tr>
+<td>是否可单证出口</td>
+<td>BOOLEAN</td>
+<td>由合规状态驱动，不合规时自动锁定为否</td>
+</tr>
+<tr>
+<td>备注</td>
+<td>TEXT</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>⚠️ <strong>关键规则：</strong> 合规状态=「不合规」时，<code>是否可单证出口</code> 字段自动强制为 FALSE，禁止解锁。</p>
+</blockquote>
+<h4 id="323">3.2.3 聚水潭客户 → 境外收货人映射</h4>
+<blockquote>
+<p><strong>背景</strong>：聚水潭订单中的「最终收货人」字段是消费者姓名（如 <code>John Smith</code>），不等同于报关单中的「境外收货人」（法律上的进口商/买方实体，如 <code>ABC Trading Co., Ltd.</code>）。两者概念完全不同，不可自动等同。</p>
+</blockquote>
+<p><strong>A. 概念区分：</strong></p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>聚水潭「最终收货人」</th>
+<th>海关「境外收货人」</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>性质</td>
+<td>个人消费者 / 最终签收人</td>
+<td><strong>法律上的进口商 / 买方实体</strong></td>
+</tr>
+<tr>
+<td>来源</td>
+<td>订单Shipping Address收件人</td>
+<td>销售合同 Buyer / 商业发票 Consignee</td>
+</tr>
+<tr>
+<td>粒度</td>
+<td>每个订单可能不同（John / Mary / Bob...）</td>
+<td><strong>同一客户多个订单共用同一收货人</strong></td>
+</tr>
+<tr>
+<td>报关作用</td>
+<td>无直接报关用途</td>
+<td>报关单必填项（表头），决定出口管制筛查</td>
+</tr>
+<tr>
+<td>字段格式</td>
+<td>个人姓名</td>
+<td>企业英文全称 + 英文地址</td>
+</tr>
+</tbody>
+</table>
+<p><strong>B. 映射逻辑（聚水潭客户 → 境外收货人表）：</strong></p>
+<pre class="codehilite"><code>生成报关草单时，系统执行以下映射：
+
+  1. 取聚水潭订单「客户名称」字段（如 &quot;ABC Trading Co., Ltd.&quot;）
+
+  2. 在收发货人表（主体类型=海外收货人）中模糊匹配：
+
+     a. 精确匹配：聚水潭客户名称 = 收发货人表.企业英文名称 → 直接关联
+
+     b. 模糊匹配（精确匹配失败时）：
+        聚水潭客户名称 包含 收发货人表.企业英文名称 的关键词 →
+        弹出候选列表（Top 3，按相似度排序），由关务人员确认
+
+     c. 无匹配：
+        弹出提示「未找到境外收货人：{客户名称}」
+        提供两个选项：
+          ┌─ [快速创建] → 打开收发货人新增界面，自动带入客户名称
+          └─ [从列表选择] → 打开收发货人选择弹窗，人工指定
+
+  3. 匹配成功 → 境外收货人信息自动填入报关草单表头第29项
+
+  4. 同一客户 = 同一境外收货人（一经确认，后续不再重复询问）
+</code></pre>
+
+<p><strong>C. 模糊匹配算法：</strong></p>
+<table>
+<thead>
+<tr>
+<th>匹配策略</th>
+<th>权重</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>英文名称精确匹配</td>
+<td>100</td>
+<td>完全相同 → 自动关联</td>
+</tr>
+<tr>
+<td>英文名称包含匹配</td>
+<td>80</td>
+<td>聚水潭客户名包含收发货人英文名</td>
+</tr>
+<tr>
+<td>关键字分词匹配</td>
+<td>60</td>
+<td>提取聚水潭客户名的词（排除 Ltd/Inc/Co 等后缀），与收发货人英文名分词对比</td>
+</tr>
+<tr>
+<td>联系人姓名匹配</td>
+<td>40</td>
+<td>聚水潭客户名称 = 收发货人表.联系人</td>
+</tr>
+<tr>
+<td>历史关联记录</td>
+<td>90</td>
+<td>同一聚水潭客户ID此前已确认过映射 → 直接复用</td>
+</tr>
+</tbody>
+</table>
+<p><strong>D. 映射关系存储（客户-收货人关联表）：</strong></p>
+<pre class="codehilite"><code class="language-sql">CREATE TABLE customer_consignee_map (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+    jst_customer_id VARCHAR(50) NOT NULL,       -- 聚水潭客户ID
+    jst_customer_name VARCHAR(200),             -- 聚水潭客户名称（快照）
+    consignee_id    BIGINT NOT NULL,            -- 收发货人表ID
+    match_method    ENUM('EXACT','FUZZY','MANUAL'),  -- 匹配方式
+    last_matched_at DATETIME,                   -- 最近一次匹配时间
+    created_by      VARCHAR(50),
+    created_at      DATETIME,
+    UNIQUE KEY uk_customer (jst_customer_id)
+);
+</code></pre>
+
+<p><strong>E. 校验规则：</strong></p>
+<table>
+<thead>
+<tr>
+<th>校验项</th>
+<th>规则</th>
+<th>失败处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>收货人必选</td>
+<td>生成报关草单前，必须成功匹配境外收货人</td>
+<td><strong>ERROR，阻断</strong></td>
+</tr>
+<tr>
+<td>国家/地区与目的国一致</td>
+<td>境外收货人.国家/地区 = 订单目的国（聚水潭）</td>
+<td>WARNING——可能存在 "注册在A国，收货在B国" 的合法情形，仅提示不阻断</td>
+</tr>
+<tr>
+<td>出口管制筛查</td>
+<td>境外收货人.国家/地区 在管制清单中</td>
+<td><strong>ERROR，阻断</strong>（已在保存收货人时拦截）</td>
+</tr>
+<tr>
+<td>关联方标记</td>
+<td>境外收货人.是否关联方 = 是 → 报关单备注自动标记「关联交易」</td>
+<td>资讯提示，不阻断</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="33">3.3 贸易参数维护</h3>
+<p>支持以下参数的下拉字典维护：</p>
+<table>
+<thead>
+<tr>
+<th>参数类别</th>
+<th>示例值</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>贸易方式</td>
+<td>一般贸易 / 市场采购贸易 / 跨境电商 / 保税区仓储转口</td>
+<td>海关规范代码</td>
+</tr>
+<tr>
+<td>包装方式</td>
+<td>纸箱 / 木箱 / 托盘 / 散装</td>
+<td>自定义</td>
+</tr>
+<tr>
+<td>运输方式</td>
+<td>海运 / 空运 / 陆运 / 快件</td>
+<td>海关规范代码</td>
+</tr>
+<tr>
+<td>最终目的国</td>
+<td>美国 US / 德国 DE / 英国 GB...</td>
+<td>来自聚水潭订单目的国字段</td>
+</tr>
+<tr>
+<td>目的港</td>
+<td>LAX / LGB / FELIXSTOWE...</td>
+<td>来自聚水潭订单目的港字段</td>
+</tr>
+<tr>
+<td>结汇方式</td>
+<td>T/T / L/C / D/P</td>
+<td>自定义</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="34">3.4 申报价公式配置</h3>
+<h4 id="341">3.4.1 公式管理</h4>
+<p>支持多条公式规则，每条规则包含：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>公式名称</td>
+<td>便于选择的标识，如「标准申报价」「保守申报价」</td>
+</tr>
+<tr>
+<td>适用范围</td>
+<td>全局默认 / 指定客户 / 指定HS编码</td>
+</tr>
+<tr>
+<td>公式表达式</td>
+<td>见下方表达式规范</td>
+</tr>
+<tr>
+<td>备注</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="342">3.4.2 公式变量定义</h4>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>含义</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cost</code></td>
+<td>不含税成本价</td>
+<td>聚水潭采购价</td>
+</tr>
+<tr>
+<td><code>domestic_freight</code></td>
+<td>国内运费</td>
+<td>3.5节「国内运费维护表」</td>
+</tr>
+<tr>
+<td><code>international_freight</code></td>
+<td>国际运费</td>
+<td>3.5.1节「国际运费配置」</td>
+</tr>
+<tr>
+<td><code>insurance_premium</code></td>
+<td>保费</td>
+<td>3.5.1节 货值×保费率</td>
+</tr>
+<tr>
+<td><code>customs_fee</code></td>
+<td>报关费</td>
+<td>3.5.1节「杂费」子项</td>
+</tr>
+<tr>
+<td><code>port_charge</code></td>
+<td>港杂费</td>
+<td>3.5.1节「杂费」子项</td>
+</tr>
+<tr>
+<td><code>coeff</code></td>
+<td>系数</td>
+<td>可配置，默认1.0</td>
+</tr>
+<tr>
+<td><code>tax_rate</code></td>
+<td>退税率</td>
+<td>商品维护表 <code>tax_refund_rate</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="343">3.4.3 公式示例</h4>
+<pre class="codehilite"><code># 方案A：成本反推（含退税因子）
+申报价 = cost / (1 - 0.20)
+
+# 方案B：完全成本加成
+申报价 = (cost + domestic_freight + customs_fee + port_charge) * coeff
+
+# 方案C：不含税成本直接申报
+申报价 = cost
+</code></pre>
+
+<h4 id="344">3.4.4 公式优先级</h4>
+<pre class="codehilite"><code>订单级指定公式  &gt;  HS编码级公式  &gt;  客户级公式  &gt;  全局默认公式
+</code></pre>
+
+<hr />
+<hr />
+<h3 id="35">3.5 国内运费维护表</h3>
+<p>聚水潭ERP无国内运费字段，需在关务系统中单独维护。运费可按「全局默认 / 供应商级 / 订单级」三级配置，优先级：订单级 &gt; 供应商级 &gt; 全局默认。</p>
+<p><strong>维护界面字段：</strong></p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>配置级别</td>
+<td>全局 / 供应商级 / 订单级</td>
+</tr>
+<tr>
+<td>供应商</td>
+<td>配置级别=供应商级时显示并必填</td>
+</tr>
+<tr>
+<td>运输方式</td>
+<td>海运 / 空运 / 陆运（可选）</td>
+</tr>
+<tr>
+<td>目的国</td>
+<td>可细化，为空则适用所有目的国</td>
+</tr>
+<tr>
+<td>计费方式</td>
+<td>固定金额 / 按重量(元/kg) / 按体积(元/CBM)</td>
+</tr>
+<tr>
+<td>运费值</td>
+<td>按计费方式填写对应数值</td>
+</tr>
+<tr>
+<td>生效日期</td>
+<td></td>
+</tr>
+<tr>
+<td>失效日期</td>
+<td>为空则长期有效</td>
+</tr>
+</tbody>
+</table>
+<p><strong>业务规则：</strong><br />
+- 生成报关单时，系统按优先级自动匹配运费<br />
+- 若三级均无配置，在生成界面提示用户手动录入该批次运费<br />
+- 历史运费记录不可删除，只能失效（保留审计轨迹）</p>
+<h4 id="351">3.5.1 国际运费 / 保费 / 杂费配置</h4>
+<blockquote>
+<p>国内运费（3.5）覆盖工厂→仓库段，国际运费覆盖仓库→目的港段。两者独立维护。</p>
+</blockquote>
+<p><strong>维护界面：</strong></p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>控件</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>运输方式</td>
+<td>下拉</td>
+<td>海运/空运/铁路/快递</td>
+</tr>
+<tr>
+<td>起运港</td>
+<td>下拉</td>
+<td>从系统配置的港口字典选择</td>
+</tr>
+<tr>
+<td>目的港</td>
+<td>下拉</td>
+<td>关联贸易参数目的港字典</td>
+</tr>
+<tr>
+<td>计费方式</td>
+<td>单选</td>
+<td>固定金额/按重量(元/kg)/按体积(元/CBM)/按柜(元/柜)</td>
+</tr>
+<tr>
+<td>运费值</td>
+<td>数字</td>
+<td>按计费方式填写</td>
+</tr>
+<tr>
+<td>保费率(%)</td>
+<td>数字</td>
+<td>默认 0.3%（货值×0.3%）</td>
+</tr>
+<tr>
+<td>杂费(¥)</td>
+<td>数字</td>
+<td>港杂/操作/单证等一次性费用</td>
+</tr>
+</tbody>
+</table>
+<p><strong>自动匹配逻辑：</strong></p>
+<pre class="codehilite"><code>生成报关草单时：
+  1. 取当前批次 INCOTERMS → 判断运费/保费由哪方付
+  2. 出口商付时 → 本表匹配运费值填入报关单
+  3. 进口商付时 → 报关单运费/保费留空
+  4. 未匹配到配置 → 草单生成时弹出提示，允许手动填入
+</code></pre>
+
+<p><strong>申报价公式变量补充</strong>（见3.4.2）：<br />
+- <code>international_freight</code> → 来自本表<br />
+- <code>insurance_premium</code> → 货值 × 保费率<br />
+- <code>misc_charge</code> → 杂费</p>
+<hr />
+<h3 id="36-incoterms">3.6 INCOTERMS 与报关映射</h3>
+<p>国际贸易术语直接决定报关单「成交方式」「运费」「保费」三个关键字段的填报方式。</p>
+<h4 id="361">3.6.1 字典表</h4>
+<table>
+<thead>
+<tr>
+<th>术语</th>
+<th>成交方式代码</th>
+<th>运费标记</th>
+<th>保费标记</th>
+<th>风险转移点</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>EXW</strong></td>
+<td>EXW</td>
+<td>进口商付</td>
+<td>进口商付</td>
+<td>工厂交货</td>
+<td>客户指定货代上门提货</td>
+</tr>
+<tr>
+<td><strong>FOB</strong></td>
+<td>FOB</td>
+<td>进口商付</td>
+<td>进口商付</td>
+<td>装运港越过船舷</td>
+<td>最常见出口方式</td>
+</tr>
+<tr>
+<td><strong>CIF</strong></td>
+<td>CIF</td>
+<td><strong>出口商付</strong></td>
+<td><strong>出口商付</strong></td>
+<td>目的港</td>
+<td>含运费保费到目的港</td>
+</tr>
+<tr>
+<td><strong>CFR</strong> (C&amp;F)</td>
+<td>C&amp;F</td>
+<td><strong>出口商付</strong></td>
+<td>进口商付</td>
+<td>目的港</td>
+<td>含运费不含保费</td>
+</tr>
+<tr>
+<td><strong>DAP</strong></td>
+<td>DAP</td>
+<td><strong>出口商付</strong></td>
+<td><strong>出口商付</strong></td>
+<td>目的地交货</td>
+<td>门到门不含清关</td>
+</tr>
+<tr>
+<td><strong>DDP</strong></td>
+<td>DDP</td>
+<td><strong>出口商付</strong></td>
+<td><strong>出口商付</strong></td>
+<td>目的地完税</td>
+<td>门到门含税</td>
+</tr>
+<tr>
+<td><strong>FCA</strong></td>
+<td>FCA</td>
+<td>进口商付</td>
+<td>进口商付</td>
+<td>承运人接管</td>
+<td>适用于多式联运首段</td>
+</tr>
+</tbody>
+</table>
+<h4 id="362">3.6.2 报关单自动映射规则</h4>
+<pre class="codehilite"><code>映射逻辑（生成报关草单时自动执行）：
+
+  1. 「成交方式」 = INCOTERMS对应的成交方式代码
+     例：合同为 FOB → 报关单成交方式 = FOB
+
+  2. 「运费」标记：
+     出口商付运费(CIF/CFR/DAP/DDP) → 报关单运费栏填入实际金额
+     进口商付运费(EXW/FOB/FCA)     → 报关单运费栏留空
+
+  3. 「保费」标记：
+     出口商付保费(CIF/DAP/DDP) → 报关单保费栏填入（货值×保费率）
+     进口商付保费(EXW/FOB/CFR/FCA) → 报关单保费栏留空
+
+  4. 「杂费」标记：
+     出口商付(DDP) → 报关单杂费栏填入目的国关税
+     其他 → 填入港杂/操作费（如实际发生）
+</code></pre>
+
+<h4 id="363">3.6.3 维护界面</h4>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>控件</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>术语代码</td>
+<td>下拉</td>
+<td>EXW / FOB / CIF / CFR(C&amp;F) / DAP / DDP / FCA</td>
+</tr>
+<tr>
+<td>成交方式映射</td>
+<td>自动</td>
+<td>系统自动关联海关成交方式代码</td>
+</tr>
+<tr>
+<td>是否为默认</td>
+<td>复选框</td>
+<td>勾选后新建合同时自动带入</td>
+</tr>
+<tr>
+<td>备注</td>
+<td>文本</td>
+<td>自定义说明</td>
+</tr>
+</tbody>
+</table>
+<h4 id="364">3.6.4 与销售合同联动</h4>
+<p>销售合同（8.4）中的INCOTERMS条款必须与报关草单「成交方式」一致。系统在生成销售合同时：<br />
+- 自动从客户合同/订单中提取 INCOTERMS（如聚水潭订单包含此字段）<br />
+- 若来源数据无 INCOTERMS，弹出提示要求人工选择<br />
+- 生成报关草单时，取同一合同号的INCOTERMS自动映射成交方式</p>
+<h4 id="365">3.6.5 合规要求</h4>
+<table>
+<thead>
+<tr>
+<th>检查项</th>
+<th>规则</th>
+<th>失败处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>合同-报关单一致</td>
+<td>销售合同INCOTERMS = 报关单成交方式映射值</td>
+<td>ERROR，阻断</td>
+</tr>
+<tr>
+<td>运费逻辑一致</td>
+<td>成交方式=EXW/FOB时运费栏不应填出口商运费</td>
+<td>WARNING，提示核对</td>
+</tr>
+<tr>
+<td>保费逻辑一致</td>
+<td>成交方式=EXW/FOB时保费栏不应填出口商保费</td>
+<td>WARNING</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="37-shipping-marks">3.7 唛头（Shipping Marks）管理</h3>
+<p>唛头是印在外包装上的标识，用于识别货物归属。报关单和INVOICE中需填入唛头内容（无则填"N/M"）。</p>
+<p><strong>自动生成模板：</strong></p>
+<pre class="codehilite"><code>变量组合生成标准唛头：
+  {{consignee_abbr}}          → 收货人缩写
+  {{dest_port}}               → 目的港
+  {{contract_no}}             → 合同号
+  {{ctn_no}}                  → 箱号（逐箱替换）
+  {{made_in}}                 → MADE IN CHINA
+
+示例输出：
+  ABC TRADING
+  LOS ANGELES
+  C/NO. 1-80
+  MADE IN CHINA
+</code></pre>
+
+<p><strong>管理界面：</strong></p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>收货人</td>
+<td>下拉选择收发货人表中的境外收货人</td>
+</tr>
+<tr>
+<td>目的港</td>
+<td>自动关联</td>
+</tr>
+<tr>
+<td>唛头模板</td>
+<td>可编辑文本框，支持变量</td>
+</tr>
+<tr>
+<td>预览</td>
+<td>实时预览生成效果</td>
+</tr>
+<tr>
+<td>默认值</td>
+<td>无配置时默认填 "N/M"</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>唛头模板可设为收货人级默认值，生成INVOICE/PACKING LIST时自动代入。支持逐票手动修改。</p>
+</blockquote>
+<h2 id="4">4. 聚水潭对接模块</h2>
+<h3 id="41">4.1 功能描述</h3>
+<p>系统通过聚水潭开放平台 API 拉取订单数据，用户在界面上搜索或粘贴内部订单号进行多选。</p>
+<p><strong>同步策略：</strong></p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>设置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>同步方式</td>
+<td>定时增量同步</td>
+</tr>
+<tr>
+<td>同步频率</td>
+<td>每30分钟拉取变更订单（可配置）</td>
+</tr>
+<tr>
+<td>全量同步</td>
+<td>仅在首次部署或手动触发时执行</td>
+</tr>
+<tr>
+<td>异常重试</td>
+<td>失败后间隔5分钟重试，最多3次；连续失败发送告警通知</td>
+</tr>
+<tr>
+<td>数据范围</td>
+<td>仅同步「待报关」状态订单 + 近90天已完成的报关记录</td>
+</tr>
+<tr>
+<td>去重策略</td>
+<td>以聚水潭 <code>modified</code> 时间戳为准，新覆盖旧</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42">4.2 选单筛选项</h3>
+<p>用户在进入「单证出口」时，通过筛选面板定位目标订单。筛选条件从上到下依次为：</p>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>筛选项</th>
+<th>控件类型</th>
+<th>必选</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>发货仓</strong></td>
+<td>下拉单选</td>
+<td>✅</td>
+<td>空（强制选择）</td>
+<td>来自聚水潭仓库字段。用户必须先选择发货仓，后续订单列表仅显示该仓的订单。</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>内部订单号</strong></td>
+<td>搜索+多选列表</td>
+<td>否</td>
+<td>空（显示全部）</td>
+<td>支持关键词搜索（订单号/客户名/SKU），勾选复选框多选。未选择时显示该仓全部订单。</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>最终目的国</strong></td>
+<td>下拉单选</td>
+<td>否</td>
+<td>空（显示全部）</td>
+<td>选择后仅显示该目的国的订单。选单后系统仍执行目的国一致性校验（见4.3节）</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>标记（多标签）</strong></td>
+<td>标签云/多选</td>
+<td>否</td>
+<td>空</td>
+<td>来自聚水潭订单「标记|多标签」字段（如「海外-空运」「海外-海运」）。本系统只读同步展示，<strong>仅用于筛选参考，不可作为运输方式权威来源</strong>（可能为空或维护错误）。选中后按标签筛选订单，支持AND/OR逻辑切换</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>最终收货人</strong></td>
+<td>显示/隐藏切换</td>
+<td>否</td>
+<td><strong>显示</strong></td>
+<td>默认为显示（订单列表展示收货人列）。用户可切换为隐藏，列表中的收货人列对应收起。仅影响展示，不影响数据</td>
+</tr>
+</tbody>
+</table>
+<p><strong>筛选执行逻辑：</strong></p>
+<pre class="codehilite"><code>用户选择发货仓 → 加载该仓订单列表（含内部订单号、目的国、标签、收货人、状态）
+用户可选继续缩小范围（目的国/标签/订单号搜索）
+最终收货人列默认展示，可通过切换按钮隐藏
+</code></pre>
+
+<h4 id="421">4.2.1 筛选项数据来源</h4>
+<table>
+<thead>
+<tr>
+<th>筛选项</th>
+<th>数据来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>发货仓</td>
+<td>聚水潭仓库基础信息接口（<code>/webapi/warehouse/query</code>），同步至本地仓库字典表</td>
+</tr>
+<tr>
+<td>内部订单号</td>
+<td>聚水潭订单查询接口（<code>/webapi/orders/single/query</code>），按发货仓过滤</td>
+</tr>
+<tr>
+<td>最终目的国</td>
+<td>聚水潭订单收货地址国家字段</td>
+</tr>
+<tr>
+<td>标记（多标签）</td>
+<td><strong>来自聚水潭订单「标记|多标签」字段</strong>（如「海外-空运」「海外-海运」），本系统只读同步。<strong>仅用于列表筛选分组，不自动匹配运输方式</strong>——最终运输方式由关务人员在下单批次确认环节手动指定（见4.5节）</td>
+</tr>
+<tr>
+<td>最终收货人</td>
+<td>聚水潭订单收货人姓名字段</td>
+</tr>
+</tbody>
+</table>
+<h4 id="422">4.2.2 订单列表列展示（与收货人显示联动）</h4>
+<table>
+<thead>
+<tr>
+<th>列名</th>
+<th>是否固定显示</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>☐ 勾选</td>
+<td>✅ 固定</td>
+<td>多选复选框</td>
+</tr>
+<tr>
+<td>内部订单号</td>
+<td>✅ 固定</td>
+<td>可点击查看详情</td>
+</tr>
+<tr>
+<td>订单日期</td>
+<td>✅ 固定</td>
+<td>聚水潭订单创建日期</td>
+</tr>
+<tr>
+<td>客户名称</td>
+<td>✅ 固定</td>
+<td>聚水潭客户字段</td>
+</tr>
+<tr>
+<td>SKU数</td>
+<td>✅ 固定</td>
+<td>该订单包含的SKU品类数</td>
+</tr>
+<tr>
+<td>总数量</td>
+<td>✅ 固定</td>
+<td>商品总件数</td>
+</tr>
+<tr>
+<td>订单金额</td>
+<td>✅ 固定</td>
+<td>订单总金额（聚水潭币种）</td>
+</tr>
+<tr>
+<td>币种</td>
+<td>✅ 固定</td>
+<td>CNY / USD / EUR</td>
+</tr>
+<tr>
+<td>发货仓</td>
+<td>✅ 固定</td>
+<td>当前筛选仓（冗余显示方便核对）</td>
+</tr>
+<tr>
+<td>最终目的国</td>
+<td>✅ 固定</td>
+<td></td>
+</tr>
+<tr>
+<td>标记/标签</td>
+<td>✅ 固定</td>
+<td>多彩标签chip展示</td>
+</tr>
+<tr>
+<td><strong>最终收货人</strong></td>
+<td>可选（默认显示）</td>
+<td>受筛选面板「最终收货人」显示/隐藏开关控制</td>
+</tr>
+</tbody>
+</table>
+<h4 id="423">4.2.3 选单约束</h4>
+<p>选单过程中系统执行以下校验：</p>
+<table>
+<thead>
+<tr>
+<th>约束项</th>
+<th>规则</th>
+<th>提示方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>目的国一致性</td>
+<td>所有勾选订单的最终目的国必须相同</td>
+<td>勾选时实时校验，不一致则阻止添加并提示</td>
+</tr>
+<tr>
+<td>订单状态</td>
+<td>仅允许选择「待报关」状态的订单</td>
+<td>下拉列表默认过滤</td>
+</tr>
+<tr>
+<td>订单归属</td>
+<td>同一批次报关单只能属于同一出口商</td>
+<td>系统自动校验</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43">4.3 从聚水潭同步的字段</h3>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>来源</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>内部订单号</td>
+<td>聚水潭主订单号</td>
+<td></td>
+</tr>
+<tr>
+<td>SKU编码</td>
+<td>与业务商品编码映射</td>
+<td></td>
+</tr>
+<tr>
+<td>数量</td>
+<td>订单商品数量</td>
+<td></td>
+</tr>
+<tr>
+<td>不含税成本价</td>
+<td>聚水潭采购单价</td>
+<td></td>
+</tr>
+<tr>
+<td>供应商编码</td>
+<td>与供应商维护表关联</td>
+<td></td>
+</tr>
+<tr>
+<td>目的国</td>
+<td>订单收货地址国家</td>
+<td></td>
+</tr>
+<tr>
+<td>目的港</td>
+<td>订单预设发货港</td>
+<td></td>
+</tr>
+<tr>
+<td>客户名称</td>
+<td>聚水潭客户字段</td>
+<td><strong>用于映射境外收货人</strong>（见3.2.3节），非直接填入报关单</td>
+</tr>
+<tr>
+<td>最终收货人</td>
+<td>聚水潭订单 Shipping Address 收件人姓名</td>
+<td><strong>仅用于列表展示筛选（4.2节），不用于报关单。≠报关单境外收货人</strong></td>
+</tr>
+<tr>
+<td>国内运费</td>
+<td>系统单独维护（见3.5节），不从聚水潭同步</td>
+<td></td>
+</tr>
+<tr>
+<td>标记（多标签）</td>
+<td>聚水潭订单「标记|多标签」字段（如「海外-空运」「海外-海运」）。仅供筛选参考，可能为空或错误，最终运输方式由关务人员手动确认</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>⚠️ <strong>重要区分</strong>：聚水潭「最终收货人」是个人消费者姓名（<code>John Smith</code>），报关单「境外收货人」是法律上的进口商/买方实体（<code>ABC Trading Co., Ltd.</code>）。两者完全不同。系统通过 <strong>3.2.3节映射逻辑</strong> 将聚水潭「客户名称」关联到 3.2.1 收发货人表中的海外收货人。</p>
+</blockquote>
+<h3 id="44">4.4 装箱清单表（仓库简易装箱清单）</h3>
+<blockquote>
+<p><strong>注意：此表是仓库打包层面的简易装箱清单，不等同于出口标准 PACKING LIST（见第8.2节）。</strong><br />
+Packing List 由系统根据此表数据 + 报关合并结果自动生成，格式见8.2节。</p>
+</blockquote>
+<p>仓库打包时由操作人员录入（或Excel批量上传），记录每箱实际装了哪些商品。<strong>支持混装：一个纸箱内可装多个SKU。</strong></p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>内部订单号</td>
+<td>VARCHAR(50)</td>
+<td>外键关联聚水潭订单</td>
+</tr>
+<tr>
+<td>箱号</td>
+<td>VARCHAR(20)</td>
+<td>如 CTN-001 / 1-5（同一订单下唯一）</td>
+</tr>
+<tr>
+<td>业务商品编码</td>
+<td>VARCHAR(50)</td>
+<td>关联报关商品表，混装时一箱可含多条</td>
+</tr>
+<tr>
+<td>商品数量</td>
+<td>DECIMAL(10,0)</td>
+<td>该SKU在此箱中的件数</td>
+</tr>
+<tr>
+<td>纸箱规格（长×宽×高 cm）</td>
+<td>VARCHAR(50)</td>
+<td>如 <code>60×40×30</code></td>
+</tr>
+<tr>
+<td>毛重（kg）</td>
+<td>DECIMAL(10,3)</td>
+<td>整箱毛重（含纸箱自重）</td>
+</tr>
+<tr>
+<td>净重（kg）</td>
+<td>DECIMAL(10,3)</td>
+<td>箱内商品净重</td>
+</tr>
+</tbody>
+</table>
+<h4 id="441">4.4.1 混装数据支持</h4>
+<ul>
+<li><strong>含义</strong>：一个纸箱内混装多个SKU（如同时装入A款包和B款包）</li>
+<li><strong>数据结构</strong>：同一 <code>箱号</code> 可对应多条记录（每个SKU一行），共同组成该箱的完整内容</li>
+<li><strong>上传方式</strong>：支持Excel批量导入，模板格式与表字段一致；也支持逐行录入</li>
+<li><strong>混装校验</strong>：系统自动对比「各SKU件数之和的毛重/净重」与「整箱毛重/净重」，偏差超阈值时警告</li>
+</ul>
+<h4 id="442-packing-list">4.4.2 与出口 PACKING LIST 的差异</h4>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>简易装箱清单（4.4）</th>
+<th>出口 PACKING LIST（8.2）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>层面</td>
+<td>仓库实操</td>
+<td>报关申报</td>
+</tr>
+<tr>
+<td>粒度</td>
+<td>一箱多行（SKU级）</td>
+<td>合并后按HS行输出</td>
+</tr>
+<tr>
+<td>语言</td>
+<td>中文为主</td>
+<td>中英双语</td>
+</tr>
+<tr>
+<td>来源</td>
+<td>仓库人员录入/上传</td>
+<td>由系统从简易装箱清单 + 合并数据自动生成</td>
+</tr>
+<tr>
+<td>混装</td>
+<td>✅ 支持</td>
+<td>合并后不体现</td>
+</tr>
+</tbody>
+</table>
+<h4 id="443-excel">4.4.3 Excel上传模板格式</h4>
+<p>仓库人员按以下 Excel 模板填写后批量导入。系统提供模板下载（含表头+示例行）。</p>
+<table>
+<thead>
+<tr>
+<th>列</th>
+<th>列名（中文）</th>
+<th>类型</th>
+<th>必填</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>内部订单号</td>
+<td>文本</td>
+<td>✅</td>
+<td>必须存在于聚水潭已同步订单中</td>
+</tr>
+<tr>
+<td>B</td>
+<td>箱号</td>
+<td>文本</td>
+<td>✅</td>
+<td>同一订单内唯一，如 <code>1</code> / <code>CTN-001</code></td>
+</tr>
+<tr>
+<td>C</td>
+<td>业务商品编码</td>
+<td>文本</td>
+<td>✅</td>
+<td>必须存在于报关商品信息表中且已审批</td>
+</tr>
+<tr>
+<td>D</td>
+<td>商品数量</td>
+<td>整数</td>
+<td>✅</td>
+<td>该SKU在此箱中的件数，≥1</td>
+</tr>
+<tr>
+<td>E</td>
+<td>纸箱规格</td>
+<td>文本</td>
+<td>✅</td>
+<td>格式 <code>长×宽×高</code>（cm），如 <code>60×40×30</code></td>
+</tr>
+<tr>
+<td>F</td>
+<td>毛重(kg)</td>
+<td>数字(3位小数)</td>
+<td>✅</td>
+<td>整箱毛重，含纸箱自重</td>
+</tr>
+<tr>
+<td>G</td>
+<td>净重(kg)</td>
+<td>数字(3位小数)</td>
+<td>✅</td>
+<td>箱内商品净重（不含纸箱）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>上传校验规则：</strong></p>
+<table>
+<thead>
+<tr>
+<th>校验项</th>
+<th>规则</th>
+<th>失败处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>订单号存在性</td>
+<td>A列必须在聚水潭订单表中存在</td>
+<td>该行标红，提示「订单号不存在」</td>
+</tr>
+<tr>
+<td>商品编码有效性</td>
+<td>C列必须在商品表中存在且审批状态=已审批</td>
+<td>该行标红，提示「商品编码无效或未审批」</td>
+</tr>
+<tr>
+<td>箱号唯一性</td>
+<td>同一订单号+同一箱号组合不能跨行重复（允许箱号相同→即为混装）</td>
+<td>同箱号多行正常通过（混装）</td>
+</tr>
+<tr>
+<td>毛重≥净重</td>
+<td>F列 ≥ G列</td>
+<td>该行标黄警告，不阻断上传</td>
+</tr>
+<tr>
+<td>数值非负</td>
+<td>D/F/G列 ≥ 0</td>
+<td>该行标红，阻断上传</td>
+</tr>
+<tr>
+<td>规格格式</td>
+<td>E列匹配正则 <code>\d+×\d+×\d+</code></td>
+<td>该行标黄警告</td>
+</tr>
+</tbody>
+</table>
+<p><strong>混装自动识别</strong>：系统扫描上传数据，同一 <code>内部订单号+箱号</code> 出现 ≥2行 → 标记该箱为「混装箱」，后续在PACKING LIST中合并显示。</p>
+<p><strong>上传流程</strong>：<br />
+1. 用户下载模板Excel（系统预填表头+校验规则注释）<br />
+2. 仓库人员填写后上传<br />
+3. 系统逐行校验，生成校验报告（通过/警告/错误 三色标注）<br />
+4. 用户确认无误后点击「导入」，数据写入装箱清单表<br />
+5. 导入后可逐行编辑修正</p>
+<hr />
+<h3 id="45">4.5 运输方式确认（批次级）</h3>
+<p>选单完成后，进入「生成报关单证」前，必须由关务人员手动确认本次批次的运输方式。</p>
+<h4 id="451">4.5.1 为什么需要手动确认</h4>
+<p>聚水潭「标记|多标签」字段存在以下不可靠因素：</p>
+<table>
+<thead>
+<tr>
+<th>情况</th>
+<th>影响</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>标记字段为空</td>
+<td>聚水潭操作人员未维护，无法判断运输方式</td>
+</tr>
+<tr>
+<td>标记字段错误</td>
+<td>实际走海运但标记为「海外-空运」，反之亦然</td>
+</tr>
+<tr>
+<td>标记非运输相关</td>
+<td>标记可能用于其他业务目的，与运输方式无关</td>
+</tr>
+</tbody>
+</table>
+<p>因此<strong>标记仅作筛选参考，不可自动带入运输方式</strong>。</p>
+<h4 id="452">4.5.2 确认界面</h4>
+<p>选单完成后，在「生成报关单证」按钮点击后弹出确认窗口：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>控件</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>批次运输方式</strong></td>
+<td>下拉单选（必选）</td>
+<td>海运 / 空运 / 陆运 / 快件，下拉值来自贸易参数字典（3.3节）</td>
+</tr>
+<tr>
+<td>标记参考</td>
+<td>只读标签展示</td>
+<td>展示选中订单的聚水潭标记（如有），供关务人员对比核对。无标记则显示「无」</td>
+</tr>
+<tr>
+<td>冲突提示</td>
+<td>条件显示</td>
+<td>若选中订单中存在<strong>不一致</strong>的标记（如部分空运部分海运），系统用黄色警告提示：「所选订单标记不一致，请核对实际运输方式」</td>
+</tr>
+</tbody>
+</table>
+<h4 id="453">4.5.3 业务规则</h4>
+<ul>
+<li>运输方式为<strong>批次级</strong>设置：同一批次所有订单共用同一运输方式</li>
+<li>确认后的运输方式写入该批次报关草单的「运输方式」字段</li>
+<li>运输方式一经确认，后续报关单证（报关单、PACKING LIST、INVOICE 等）统一引用此值</li>
+</ul>
+<hr />
+<h3 id="46">4.6 物流单证录入（订舱后补录）</h3>
+<p>订舱完成后，关务人员需在系统中补录物流单证信息，用于报关单填制和状态追踪。</p>
+<h4 id="461">4.6.1 集装箱信息</h4>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>集装箱号</td>
+<td>VARCHAR(20)</td>
+<td>柜号，如 TCLU1234567</td>
+</tr>
+<tr>
+<td>箱型</td>
+<td>ENUM</td>
+<td>20GP / 40GP / 40HQ / 45HQ</td>
+</tr>
+<tr>
+<td>铅封号</td>
+<td>VARCHAR(20)</td>
+<td>集装箱封条号</td>
+</tr>
+<tr>
+<td>装柜日期</td>
+<td>DATE</td>
+<td>实际装箱日期</td>
+</tr>
+<tr>
+<td>关联草单</td>
+<td>FK</td>
+<td>一个草单可关联多个集装箱（一对多）</td>
+</tr>
+</tbody>
+</table>
+<h4 id="462">4.6.2 提单信息</h4>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>提单号 (B/L No.)</td>
+<td>VARCHAR(30)</td>
+<td>海运提单号 / 空运 AWB No.</td>
+</tr>
+<tr>
+<td>船名/航次</td>
+<td>VARCHAR(50)</td>
+<td>或航班号</td>
+</tr>
+<tr>
+<td>开船日 (ETD)</td>
+<td>DATE</td>
+<td>Estimated Time of Departure</td>
+</tr>
+<tr>
+<td>到港日 (ETA)</td>
+<td>DATE</td>
+<td>Estimated Time of Arrival</td>
+</tr>
+</tbody>
+</table>
+<h4 id="463">4.6.3 录入时机与校验</h4>
+<pre class="codehilite"><code>录入时机：订舱确认后、报关申报前
+数据来源：货代/船公司提供的订舱确认单
+必须校验：
+  - 集装箱号不为空（海运/空运必填）
+  - 提单号不为空（申报前必填）
+  - ETD &gt; 当前日期（提醒但不阻断）
+  - 关联的草单状态 = 已确认(CONFIRMED)
+</code></pre>
+
+<blockquote>
+<p><strong>注意</strong>：集装箱号是H2000报关单必填项（有集装箱运输时），提单号是海关放行后追踪物流的依据。缺失将导致报关单无法提交。</p>
+</blockquote>
+<hr />
+<h2 id="5">5. 申报合并规则引擎</h2>
+<h3 id="51">5.1 合并前提条件（硬性约束）</h3>
+<p>合并申报要求同时满足：<br />
+1. <strong>相同供应商</strong>（supplier_code 相同）<br />
+2. <strong>相同原产地</strong>（origin 相同）</p>
+<p>违反任一条件，即使HS编码相同也<strong>不允许</strong>合并到同一申报行。</p>
+<h3 id="52-61">5.2 合并策略选项（6+1种）</h3>
+<table>
+<thead>
+<tr>
+<th>策略代码</th>
+<th>合并维度</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MERGE_HS</code></td>
+<td>相同HS编码</td>
+<td>同类商品最大化合并，申报行数最少</td>
+</tr>
+<tr>
+<td><code>MERGE_HS_NAME</code></td>
+<td>HS编码 + 品名</td>
+<td>同HS但不同品名需区分时</td>
+</tr>
+<tr>
+<td><code>MERGE_HS_NAME_SKU</code></td>
+<td>HS编码 + 品名 + 商品编码</td>
+<td>需保留SKU粒度</td>
+</tr>
+<tr>
+<td><code>MERGE_HS_NAME_STYLE</code></td>
+<td>HS编码 + 品名 + 款式编码</td>
+<td>女包/鞋服按款式区分</td>
+</tr>
+<tr>
+<td><code>MERGE_HS_NAME_STYLE_MATERIAL</code></td>
+<td>HS编码 + 品名 + 款式编码 + 材质</td>
+<td>最精细，申报要素完整</td>
+</tr>
+<tr>
+<td><code>MERGE_HS_NAME_MATERIAL</code></td>
+<td>HS编码 + 品名 + 材质</td>
+<td>款式不重要但材质需区分</td>
+</tr>
+<tr>
+<td><code>NO_MERGE</code></td>
+<td>不合并，每条SKU独立一行</td>
+<td>申报行数最多，精确一致</td>
+</tr>
+</tbody>
+</table>
+<h3 id="53">5.3 校验规则</h3>
+<h4 id="531-250">5.3.1 申报要素字符数校验（250字符限制）</h4>
+<pre class="codehilite"><code>申报要素字段（如款号列表）合并后总长度 &gt; 250字符 → 报错
+</code></pre>
+
+<p><strong>处理选项（用户可选）：</strong><br />
+- <strong>截断 + 加"等"字</strong>：保留前N款，末尾追加「等」字（如：<code>A001、A002、A003等</code>）<br />
+- <strong>切换合并策略</strong>：提示用户选择更细粒度的合并方式<br />
+- <strong>手动编辑</strong>：允许用户在生成前手动缩写申报要素</p>
+<blockquote>
+<p>⚠️ 注意："截断+等"方案在法规上无明文禁止，但存在口岸执行尺度差异。详见第13章《申报要素截断合规说明》。</p>
+</blockquote>
+<h4 id="532">5.3.2 申报行数校验</h4>
+<pre class="codehilite"><code>海关出口报关单最大申报行数：50行（标准H2000申报格式）
+生成申报行数 &gt; 50行 → 报错，提示切换合并策略
+</code></pre>
+
+<p><strong>处理选项：</strong><br />
+- 提示当前行数 vs 上限<br />
+- 推荐可压缩到50行以内的合并策略<br />
+- 拆分为多张报关单（需手动确认）</p>
+<h3 id="54">5.4 合并规则执行流程</h3>
+<pre class="codehilite"><code>输入订单列表
+    │
+    ▼
+过滤：已审批商品信息 &amp; 已通过合规检查
+    │
+    ▼
+按（供应商 + 原产地）分组
+    │
+    ▼
+在每组内，按选定合并策略归并行
+    │
+    ▼
+校验：字符数 ≤ 250 &amp; 行数 ≤ 50
+    │
+    ├── 通过 → 生成草单
+    └── 失败 → 报错提示，要求调整策略
+</code></pre>
+
+<hr />
+<h2 id="6">6. 合规检查模块</h2>
+<h3 id="61">6.1 小规模纳税人逻辑</h3>
+<p>出口订单涉及小规模纳税人供应商时，按以下逻辑处理：</p>
+<pre class="codehilite"><code>if 供应商.纳税人类型 == &quot;小规模纳税人&quot;:
+    if 供应商.合规状态 == &quot;不合规&quot;:
+        → 硬性拦截，禁止生成报关单
+        → 界面显示：【禁止操作】该供应商（XX）已标记为不合规，
+                     不允许进行单证出口。请联系合规部门处理。
+
+    elif 供应商.合规状态 in (&quot;合规&quot;, &quot;待确认&quot;):
+        → 弹出二次确认对话框
+        → 提示：&quot;该批次包含小规模纳税人商品，单证出口将无法退税，
+                  且存在合规风险。确认继续？&quot;
+        → 用户需手动勾选确认复选框后方可继续
+        → 注意：待确认(PENDING)状态下 can_doc_export 仍为 TRUE，
+          允许出口，但需关务主管确认风险
+</code></pre>
+
+<h3 id="62">6.2 合规检查项汇总</h3>
+<table>
+<thead>
+<tr>
+<th>检查项</th>
+<th>触发条件</th>
+<th>处理方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>小规模+不合规</td>
+<td>订单含不合规小规模供应商</td>
+<td>硬性拦截</td>
+</tr>
+<tr>
+<td>小规模+合规/待确认</td>
+<td>订单含小规模供应商（合规）</td>
+<td>二次确认弹窗</td>
+</tr>
+<tr>
+<td>商品未审批</td>
+<td>报关商品状态≠已审批</td>
+<td>警告，不可生成</td>
+</tr>
+<tr>
+<td>HS编码缺失</td>
+<td>商品无有效HS编码</td>
+<td>错误提示</td>
+</tr>
+<tr>
+<td>目的国冲突</td>
+<td>多选订单目的国不一致</td>
+<td>实时阻止勾选</td>
+</tr>
+</tbody>
+</table>
+<h3 id="63-aeo">6.3 双人复核机制（AEO认证要求）</h3>
+<p>依据海关AEO认证标准，关键业务节点需实施双人复核。</p>
+<table>
+<thead>
+<tr>
+<th>操作节点</th>
+<th>复核类型</th>
+<th>执行方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>报关草单提交审核</td>
+<td><strong>强制复核</strong></td>
+<td>制单人提交 → 关务主管审核通过 → 方可进入「已确认」状态</td>
+</tr>
+<tr>
+<td>报关草单修改</td>
+<td><strong>强制复核</strong></td>
+<td>修改后须复核人确认，修改记录永久保留</td>
+</tr>
+<tr>
+<td>单证作废/删除</td>
+<td><strong>强制复核</strong></td>
+<td>不可单人操作，须双人确认</td>
+</tr>
+<tr>
+<td>申报价公式变更</td>
+<td><strong>强制复核</strong></td>
+<td>公式修改后需关务主管审批生效</td>
+</tr>
+<tr>
+<td>HS编码归属变更</td>
+<td><strong>强制复核</strong></td>
+<td>商品HS编码调整须双人确认</td>
+</tr>
+<tr>
+<td>供应商合规状态变更</td>
+<td><strong>强制复核</strong></td>
+<td>从PENDING→COMPLIANT或NON_COMPLIANT须双人确认</td>
+</tr>
+</tbody>
+</table>
+<p><strong>复核界面</strong>：<br />
+- 复核人可见操作人、操作内容、变更前后对比<br />
+- 复核通过 → 记录复核人+时间戳<br />
+- 复核驳回 → 回退至操作人并附驳回原因</p>
+<h3 id="64">6.4 出口管制与品牌授权检查</h3>
+<h4 id="641">6.4.1 出口管制筛查</h4>
+<table>
+<thead>
+<tr>
+<th>检查项</th>
+<th>触发条件</th>
+<th>处理方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>最终目的国管制</td>
+<td>目的国在商务部/联合国制裁清单中</td>
+<td><strong>硬性拦截</strong>，提示合规部门</td>
+</tr>
+<tr>
+<td>最终收货人筛查</td>
+<td>收货人在SDN/Entity List中</td>
+<td><strong>硬性拦截</strong></td>
+</tr>
+<tr>
+<td>商品管制编码(ECCN)</td>
+<td>商品属于军民两用/管制物项</td>
+<td><strong>硬性拦截</strong>，提示需申请出口许可证</td>
+</tr>
+<tr>
+<td>转运风险</td>
+<td>目的港与实际最终目的国不符（转运风险国）</td>
+<td>WARNING，提示尽职调查</td>
+</tr>
+</tbody>
+</table>
+<p><strong>筛查数据来源：</strong><br />
+- 商务部《两用物项出口管制清单》<br />
+- 美国 BIS Entity List / OFAC SDN List<br />
+- 欧盟 Consolidated Sanctions List<br />
+- 系统定期自动更新或手动导入</p>
+<h4 id="642">6.4.2 品牌授权验证</h4>
+<p>女包/鞋服出口经常涉及品牌商品，海关对品牌商品会重点核查授权文件。</p>
+<table>
+<thead>
+<tr>
+<th>检查项</th>
+<th>规则</th>
+<th>失败处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>品牌标记</td>
+<td>商品表新增 <code>brand_name</code> + <code>has_authorization</code> 字段</td>
+<td>—</td>
+</tr>
+<tr>
+<td>授权文件</td>
+<td><code>has_authorization=YES</code> 时须上传品牌授权书</td>
+<td>WARNING（不阻断申报，但风险自担）</td>
+</tr>
+<tr>
+<td>授权有效期</td>
+<td>授权书到期前30天预警</td>
+<td>WARNING</td>
+</tr>
+<tr>
+<td>假冒风险</td>
+<td>商品名/描述含知名品牌关键字但 <code>has_authorization=NO</code></td>
+<td><strong>ERROR，阻断</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7">7. 报关草单生成模块</h2>
+<h3 id="71">7.1 操作流程</h3>
+<pre class="codehilite"><code>第1步：选择发货仓（必选，下拉来自聚水潭仓库列表，见4.2）
+    │
+第2步：筛选订单（在筛选面板中定位目标订单，见4.2）
+    ├─ 内部订单号：搜索+多选
+    ├─ 最终目的国：下拉过滤
+    ├─ 标记/标签：标签云筛选
+    └─ 最终收货人：默认显示，可按需隐藏
+    │
+第3步：确认运输方式（批次级手动指定，见4.5）
+    ├─ 下拉选择：海运 / 空运 / 陆运 / 快件
+    └─ 系统展示聚水潭标记参考 + 冲突提示
+    │
+第4步：选择合并策略（见第5章）
+    │
+第5步：配置申报价公式（或使用默认，见3.4）
+    │
+第6步：系统执行合规检查（见第6章）
+    │
+第7步：预览申报明细（含行数、字符数校验，超限则提示拆单或切换策略）
+    │
+第8步：确认生成草单
+    │
+第9步：草单进入状态流转（见第9章）
+</code></pre>
+
+<h3 id="72-h2000105">7.2 报关草单核心字段（参照海关H2000标准，105填制项完整映射）</h3>
+<blockquote>
+<p>依据：海关总署公告2019年第18号《报关单填制规范》及后续修订。H2000报关单共105个填制项，以下列出出口报关单核心/必填字段及其在本系统中的数据来源；未列出的系统预留字段可在后续版本补充。</p>
+</blockquote>
+<p><strong>表头信息（必填+常用）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>字段</th>
+<th>必填</th>
+<th>来源</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>预录入编号</td>
+<td>✓</td>
+<td>系统自动生成</td>
+<td>18位，规则见下方</td>
+</tr>
+<tr>
+<td>2</td>
+<td>海关编号</td>
+<td>✓</td>
+<td>单一窗口返回</td>
+<td>申报后由海关系统分配</td>
+</tr>
+<tr>
+<td>3</td>
+<td>境内收发货人</td>
+<td>✓</td>
+<td>收发货人维护表</td>
+<td>我司（井太蘭）海关注册编码+名称</td>
+</tr>
+<tr>
+<td>4</td>
+<td>生产销售单位</td>
+<td>✓</td>
+<td>收发货人维护表</td>
+<td>出口货物在境内的生产或销售单位</td>
+</tr>
+<tr>
+<td>5</td>
+<td>申报单位</td>
+<td>✓</td>
+<td>系统配置</td>
+<td>如委托报关行则填报关行编码</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>运输方式</strong></td>
+<td>✓</td>
+<td><strong>4.5手动确认（批次级）</strong></td>
+<td>海运/空运/陆运/快件，海关规范代码</td>
+</tr>
+<tr>
+<td>7</td>
+<td>运输工具名称</td>
+<td>条件</td>
+<td>4.6节补录</td>
+<td>船名/航次/航班号，订舱后可知</td>
+</tr>
+<tr>
+<td>8</td>
+<td>提运单号</td>
+<td>条件</td>
+<td>4.6节补录</td>
+<td>B/L No. 或 AWB No.，订舱后补录</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>成交方式</strong></td>
+<td>✓</td>
+<td><strong>INCOTERMS映射（3.6节）</strong></td>
+<td>FOB/CIF/C&amp;F/EXW，决定运费保费标记</td>
+</tr>
+<tr>
+<td>10</td>
+<td><strong>运费</strong></td>
+<td>条件</td>
+<td>3.5.1 国际运费配置</td>
+<td>成交方式为FOB/EXW时标记，CIF时可空</td>
+</tr>
+<tr>
+<td>11</td>
+<td><strong>保费</strong></td>
+<td>条件</td>
+<td>3.5.1 国际保费配置</td>
+<td>同上逻辑，默认费率0.3%</td>
+</tr>
+<tr>
+<td>12</td>
+<td>杂费</td>
+<td>条件</td>
+<td>3.5.1 配置</td>
+<td>港杂/操作费，INCOTERMS决定是否标记</td>
+</tr>
+<tr>
+<td>13</td>
+<td><strong>件数</strong></td>
+<td>✓</td>
+<td><strong>PACKING LIST 总箱数</strong></td>
+<td>来自8.2.1合并显示清单合计行</td>
+</tr>
+<tr>
+<td>14</td>
+<td><strong>包装种类</strong></td>
+<td>✓</td>
+<td>装箱清单/手动选</td>
+<td>纸箱/木箱/托盘/裸装，海关代码</td>
+</tr>
+<tr>
+<td>15</td>
+<td><strong>毛重(kg)</strong></td>
+<td>✓</td>
+<td><strong>PACKING LIST 总毛重</strong></td>
+<td>来自8.2.1合并显示清单合计行</td>
+</tr>
+<tr>
+<td>16</td>
+<td><strong>净重(kg)</strong></td>
+<td>✓</td>
+<td><strong>PACKING LIST 总净重</strong></td>
+<td>来自8.2.1合并显示清单合计行</td>
+</tr>
+<tr>
+<td>17</td>
+<td>集装箱号</td>
+<td>条件</td>
+<td>4.6节补录</td>
+<td>装柜后可知，关联装箱清单</td>
+</tr>
+<tr>
+<td>18</td>
+<td>合同号</td>
+<td>✓</td>
+<td>系统自动生成</td>
+<td>SC-{年月}-{流水号}</td>
+</tr>
+<tr>
+<td>19</td>
+<td>贸易国（地区）</td>
+<td>✓</td>
+<td>聚水潭订单目的国</td>
+<td></td>
+</tr>
+<tr>
+<td>20</td>
+<td>启运港</td>
+<td>✓</td>
+<td>系统配置</td>
+<td>如 SHENZHEN / SHANGHAI</td>
+</tr>
+<tr>
+<td>21</td>
+<td>指运港</td>
+<td>✓</td>
+<td>聚水潭订单目的港</td>
+<td>如 LOS ANGELES</td>
+</tr>
+<tr>
+<td>22</td>
+<td>境内货源地</td>
+<td>✓</td>
+<td>发货仓地址</td>
+<td>按仓库所在省市自动填入</td>
+</tr>
+<tr>
+<td>23</td>
+<td>贸易方式（监管方式）</td>
+<td>✓</td>
+<td>贸易参数字典（3.3）</td>
+<td>一般贸易(0110)/市场采购(1039)等</td>
+</tr>
+<tr>
+<td>24</td>
+<td>征免性质</td>
+<td>✓</td>
+<td>贸易参数字典</td>
+<td>一般征税(101)/其他法定(299)等</td>
+</tr>
+<tr>
+<td>25</td>
+<td>结汇方式</td>
+<td>✓</td>
+<td>贸易参数字典</td>
+<td>T/T / L/C / D/P</td>
+</tr>
+<tr>
+<td>26</td>
+<td>许可证编号</td>
+<td>条件</td>
+<td>系统配置/手动录入</td>
+<td>管制商品必填，无则留空</td>
+</tr>
+<tr>
+<td>27</td>
+<td>出口日期</td>
+<td>自动</td>
+<td>单一窗口返填</td>
+<td>运输工具实际离境日期，申报时不填</td>
+</tr>
+<tr>
+<td>28</td>
+<td>申报日期</td>
+<td>自动</td>
+<td>系统时间戳</td>
+<td>海关接受申报的日期</td>
+</tr>
+<tr>
+<td>29</td>
+<td>境外收货人</td>
+<td>✓</td>
+<td><strong>3.2.1 收发货人表 + 3.2.3映射</strong></td>
+<td>英文名称+地址。由系统通过聚水潭「客户名称」自动映射至收发货人表（主体类型=海外收货人），匹配失败时人工确认</td>
+</tr>
+<tr>
+<td>30</td>
+<td>随附单证</td>
+<td>条件</td>
+<td>系统关联</td>
+<td>如出境货物通关单、许可证等</td>
+</tr>
+<tr>
+<td>31</td>
+<td>备注</td>
+<td>选填</td>
+<td>手动录入</td>
+<td>特殊事项说明</td>
+</tr>
+<tr>
+<td>32</td>
+<td>标记唛头</td>
+<td>选填</td>
+<td>唛头管理</td>
+<td>集装箱封条号或N/M</td>
+</tr>
+</tbody>
+</table>
+<p><strong>表体信息（申报明细，每行1~50）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>字段</th>
+<th>必填</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>33</td>
+<td>商品编号</td>
+<td>✓</td>
+<td>HS编码（10位）</td>
+</tr>
+<tr>
+<td>34</td>
+<td>商品名称</td>
+<td>✓</td>
+<td>中文品名（与增值税发票品名一致）</td>
+</tr>
+<tr>
+<td>35</td>
+<td>商品规格型号</td>
+<td>✓</td>
+<td>申报要素，≤250字符</td>
+</tr>
+<tr>
+<td>36</td>
+<td>数量及单位（法定）</td>
+<td>✓</td>
+<td>法定第一计量单位 + 数量</td>
+</tr>
+<tr>
+<td>37</td>
+<td>数量及单位（第二）</td>
+<td>条件</td>
+<td>HS编码要求双单位时必填</td>
+</tr>
+<tr>
+<td>38</td>
+<td>单价</td>
+<td>✓</td>
+<td>申报价（3.4公式计算）</td>
+</tr>
+<tr>
+<td>39</td>
+<td>总价</td>
+<td>✓</td>
+<td>单价 × 数量</td>
+</tr>
+<tr>
+<td>40</td>
+<td>币制</td>
+<td>✓</td>
+<td>USD/EUR等</td>
+</tr>
+<tr>
+<td>41</td>
+<td>原产国（地区）</td>
+<td>✓</td>
+<td>供应商原产地</td>
+</tr>
+<tr>
+<td>42</td>
+<td>最终目的国（地区）</td>
+<td>✓</td>
+<td>来自聚水潭订单</td>
+</tr>
+<tr>
+<td>43</td>
+<td>征免</td>
+<td>✓</td>
+<td>照章征税/全免/保证金等</td>
+</tr>
+<tr>
+<td>44</td>
+<td>境内货源地</td>
+<td>条件</td>
+<td>同行号内需指定省内货源地</td>
+</tr>
+</tbody>
+</table>
+<p><strong>预录入编号规则：</strong></p>
+<pre class="codehilite"><code>18位：4位关区代码 + 4位年份 + 1位进出口标志(0=出口) + 9位流水号
+示例：5310 2026 0 000000001
+</code></pre>
+
+<p><strong>字段联动关系（与PACKING LIST校验链闭合）：</strong></p>
+<pre class="codehilite"><code>PACKING LIST合并显示清单 → 总件数  → 报关草单「件数」
+PACKING LIST合并显示清单 → 总毛重  → 报关草单「毛重」
+PACKING LIST合并显示清单 → 总净重  → 报关草单「净重」
+INCOTERMS（3.6）        → 成交方式 → 运费/保费标记
+发货仓地址              → 境内货源地
+</code></pre>
+
+<hr />
+<h2 id="8">8. 单证输出模块</h2>
+<h3 id="80">8.0 模板策略</h3>
+<p>系统将8类单证分为两组：</p>
+<p><strong>A组 — 标准格式（系统按规范自动生成）</strong></p>
+<table>
+<thead>
+<tr>
+<th>单证</th>
+<th>标准来源</th>
+<th>生成方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>出口报关草单</td>
+<td>海关H2000格式</td>
+<td>系统内置模板，按填制规范自动填充</td>
+</tr>
+<tr>
+<td>装箱单 PACKING LIST</td>
+<td>海关/行业通用格式</td>
+<td>从简易装箱清单（4.4）+ 合并数据自动生成</td>
+</tr>
+<tr>
+<td>出口发票 Export Invoice</td>
+<td>海关/行业通用格式</td>
+<td>系统内置模板</td>
+</tr>
+<tr>
+<td>销售合同 Sales Contract</td>
+<td>国际贸易惯例</td>
+<td>系统内置模板，支持多版本（按目的国/贸易方式）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>B组 — 自定义格式（用户维护/上传模板）</strong></p>
+<table>
+<thead>
+<tr>
+<th>单证</th>
+<th>原因</th>
+<th>模板方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>国内采购合同</td>
+<td>各供应商格式不同，无可强制统一标准</td>
+<td>上传<code>docx</code>模板，系统自动填充变量</td>
+</tr>
+<tr>
+<td>入库单</td>
+<td>内部流程单据，格式随仓库管理需求变化</td>
+<td>上传<code>docx</code>模板，或直接使用系统默认格式</td>
+</tr>
+<tr>
+<td>关货单</td>
+<td>同上</td>
+<td>上传<code>docx</code>模板，或直接使用系统默认格式</td>
+</tr>
+<tr>
+<td>对外 INVOICE</td>
+<td>客户格式要求各异（部分客户要求特定模板）</td>
+<td>上传<code>docx</code>模板，系统自动填充变量；无上传则用系统内置标准模板</td>
+</tr>
+</tbody>
+</table>
+<h4 id="801">8.0.1 完整模板变量清单</h4>
+<p>用户上传的 <code>docx</code> 模板中用 <code>{{变量名}}</code> 占位，系统自动替换。以下按单证分类列出全部可用变量：</p>
+<p><strong>① 国内采购合同</strong></p>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>类型</th>
+<th>说明</th>
+<th>示例值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{{contract_no}}</code></td>
+<td>文本</td>
+<td>合同编号</td>
+<td>PC-202606-001</td>
+</tr>
+<tr>
+<td><code>{{contract_date}}</code></td>
+<td>日期</td>
+<td>合同签订日期</td>
+<td>2026-06-16</td>
+</tr>
+<tr>
+<td><code>{{buyer_name}}</code></td>
+<td>文本</td>
+<td>买方（我司名称）</td>
+<td>井太蘭進出口有限公司</td>
+</tr>
+<tr>
+<td><code>{{buyer_address}}</code></td>
+<td>文本</td>
+<td>买方地址</td>
+<td></td>
+</tr>
+<tr>
+<td><code>{{buyer_contact}}</code></td>
+<td>文本</td>
+<td>买方联系人+电话</td>
+<td></td>
+</tr>
+<tr>
+<td><code>{{supplier_name}}</code></td>
+<td>文本</td>
+<td>供应商全称</td>
+<td></td>
+</tr>
+<tr>
+<td><code>{{supplier_address}}</code></td>
+<td>文本</td>
+<td>供应商地址</td>
+<td></td>
+</tr>
+<tr>
+<td><code>{{supplier_contact}}</code></td>
+<td>文本</td>
+<td>供应商联系人+电话</td>
+<td></td>
+</tr>
+<tr>
+<td><code>{{supplier_tax_type}}</code></td>
+<td>文本</td>
+<td>纳税类型标记</td>
+<td>一般纳税人 / ⚠️小规模纳税人</td>
+</tr>
+<tr>
+<td><code>{{items_table}}</code></td>
+<td>表格</td>
+<td>商品明细表格（系统自动生成，含品名、规格、数量、不含税单价、含税总价）</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>{{total_amount_cny}}</code></td>
+<td>金额</td>
+<td>含税总金额（人民币）</td>
+<td>¥156,000.00</td>
+</tr>
+<tr>
+<td><code>{{total_amount_no_tax}}</code></td>
+<td>金额</td>
+<td>不含税总金额</td>
+<td>¥138,053.10</td>
+</tr>
+<tr>
+<td><code>{{payment_terms}}</code></td>
+<td>文本</td>
+<td>付款方式（从供应商表取，可编辑）</td>
+<td>月结30天</td>
+</tr>
+<tr>
+<td><code>{{delivery_date}}</code></td>
+<td>日期</td>
+<td>最晚交货日期</td>
+<td>2026-07-10</td>
+</tr>
+<tr>
+<td><code>{{remark}}</code></td>
+<td>文本</td>
+<td>备注（可手动录入）</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>② 入库单</strong></p>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>类型</th>
+<th>说明</th>
+<th>示例值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{{receipt_no}}</code></td>
+<td>文本</td>
+<td>入库单号</td>
+<td>RK-20260616-001</td>
+</tr>
+<tr>
+<td><code>{{receipt_date}}</code></td>
+<td>日期</td>
+<td>入库日期</td>
+<td>2026-06-16</td>
+</tr>
+<tr>
+<td><code>{{supplier_name}}</code></td>
+<td>文本</td>
+<td>供应商全称</td>
+<td></td>
+</tr>
+<tr>
+<td><code>{{warehouse_name}}</code></td>
+<td>文本</td>
+<td>入库仓库名称</td>
+<td>璞景仓</td>
+</tr>
+<tr>
+<td><code>{{items_table}}</code></td>
+<td>表格</td>
+<td>商品明细（品名/编码/数量/单价）</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>{{total_quantity}}</code></td>
+<td>整数</td>
+<td>总件数</td>
+<td>1,200</td>
+</tr>
+<tr>
+<td><code>{{total_packages}}</code></td>
+<td>整数</td>
+<td>总箱数</td>
+<td>80</td>
+</tr>
+<tr>
+<td><code>{{total_gross_weight}}</code></td>
+<td>数字</td>
+<td>总毛重(kg)</td>
+<td>3,200.5</td>
+</tr>
+<tr>
+<td><code>{{related_order_nos}}</code></td>
+<td>文本</td>
+<td>关联内部订单号（多个逗号分隔）</td>
+<td>JO20260601-001,JO20260601-002</td>
+</tr>
+<tr>
+<td><code>{{remark}}</code></td>
+<td>文本</td>
+<td>备注</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>③ 关货单</strong></p>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>类型</th>
+<th>说明</th>
+<th>示例值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{{doc_no}}</code></td>
+<td>文本</td>
+<td>关货单号</td>
+<td>GH-20260616-001</td>
+</tr>
+<tr>
+<td><code>{{issue_date}}</code></td>
+<td>日期</td>
+<td>出仓日期</td>
+<td>2026-06-16</td>
+</tr>
+<tr>
+<td><code>{{warehouse_name}}</code></td>
+<td>文本</td>
+<td>出货仓库</td>
+<td>璞景仓</td>
+</tr>
+<tr>
+<td><code>{{destination}}</code></td>
+<td>文本</td>
+<td>目的地（目的港+国家）</td>
+<td>LOS ANGELES, USA</td>
+</tr>
+<tr>
+<td><code>{{items_table}}</code></td>
+<td>表格</td>
+<td>商品明细</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>{{total_packages}}</code></td>
+<td>整数</td>
+<td>总箱数</td>
+<td></td>
+</tr>
+<tr>
+<td><code>{{total_gross_weight}}</code></td>
+<td>数字</td>
+<td>总毛重(kg)</td>
+<td></td>
+</tr>
+<tr>
+<td><code>{{total_volume}}</code></td>
+<td>数字</td>
+<td>总体积(CBM)</td>
+<td></td>
+</tr>
+<tr>
+<td><code>{{pickup_address}}</code></td>
+<td>文本</td>
+<td>提货地址</td>
+<td></td>
+</tr>
+<tr>
+<td><code>{{carrier}}</code></td>
+<td>文本</td>
+<td>承运人/运输公司</td>
+<td></td>
+</tr>
+<tr>
+<td><code>{{remark}}</code></td>
+<td>文本</td>
+<td>备注</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>④ 对外 INVOICE（客户版）</strong></p>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>类型</th>
+<th>说明</th>
+<th>示例值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{{invoice_no}}</code></td>
+<td>文本</td>
+<td>发票号</td>
+<td>INV-20260616-001</td>
+</tr>
+<tr>
+<td><code>{{invoice_date}}</code></td>
+<td>日期</td>
+<td>发票日期</td>
+<td>2026-06-16</td>
+</tr>
+<tr>
+<td><code>{{buyer_name}}</code></td>
+<td>文本</td>
+<td>买方（客户英文名）</td>
+<td>ABC Trading Co., Ltd.</td>
+</tr>
+<tr>
+<td><code>{{buyer_address}}</code></td>
+<td>文本</td>
+<td>买方地址（英文）</td>
+<td></td>
+</tr>
+<tr>
+<td><code>{{seller_name}}</code></td>
+<td>文本</td>
+<td>卖方（我司英文名）</td>
+<td>JINGTAILAN IMPORT &amp; EXPORT</td>
+</tr>
+<tr>
+<td><code>{{seller_address}}</code></td>
+<td>文本</td>
+<td>卖方地址（英文）</td>
+<td></td>
+</tr>
+<tr>
+<td><code>{{po_no}}</code></td>
+<td>文本</td>
+<td>客户采购单号（来自聚水潭）</td>
+<td>PO-2026-00123</td>
+</tr>
+<tr>
+<td><code>{{items_table}}</code></td>
+<td>表格</td>
+<td>商品明细（英文：Description/Qty/Unit Price/Amount）</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>{{total_amount_usd}}</code></td>
+<td>金额</td>
+<td>总金额（美元）</td>
+<td>USD 156,000.00</td>
+</tr>
+<tr>
+<td><code>{{port_of_loading}}</code></td>
+<td>文本</td>
+<td>装运港</td>
+<td>SHENZHEN, CHINA</td>
+</tr>
+<tr>
+<td><code>{{port_of_discharge}}</code></td>
+<td>文本</td>
+<td>目的港</td>
+<td>LOS ANGELES, USA</td>
+</tr>
+<tr>
+<td><code>{{final_destination}}</code></td>
+<td>文本</td>
+<td>最终目的国</td>
+<td>USA</td>
+</tr>
+<tr>
+<td><code>{{payment_terms}}</code></td>
+<td>文本</td>
+<td>付款条款</td>
+<td>T/T 30% deposit, 70% before shipment</td>
+</tr>
+<tr>
+<td><code>{{shipping_marks}}</code></td>
+<td>文本</td>
+<td>唛头（可手动填）</td>
+<td>N/M</td>
+</tr>
+<tr>
+<td><code>{{container_no}}</code></td>
+<td>文本</td>
+<td>柜号（可手动填）</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>混合策略</strong>：对任意B组单证，用户可选择：<br />
+- 上传自己的模板（推荐，保留企业格式一致性），模板中可任意组合以上变量<br />
+- 使用系统提供的默认模板（已内置所有变量，快速上手）</p>
+<p><strong>模板上传规范</strong>：<br />
+- 格式：仅支持 <code>.docx</code>（Office Open XML）<br />
+- 变量语法：<code>{{变量名}}</code>，花括号内不含空格，区分大小写<br />
+- 未识别变量 → 生成时保留原样不报错，方便用户逐步迁移旧模板</p>
+<blockquote>
+<p><strong>对比说明</strong>：与「申报价公式」策略一致 —— 有标准则按标准，无标准则灵活可配。</p>
+</blockquote>
+<hr />
+<h3 id="81">8.1 出口报关草单</h3>
+<ul>
+<li>格式：对应海关H2000标准格式，支持导出PDF/Excel，并对接中国国际贸易单一窗口（或地方版通关系统）直接申报</li>
+<li>数据来源：第7章草单数据</li>
+<li>特殊处理：申报价使用配置公式计算，非客户对外价格</li>
+</ul>
+<h3 id="82-packing-list">8.2 装箱单（Packing List）</h3>
+<ul>
+<li>语言：中英双语</li>
+<li>内容：箱号、商品名称（英文）、规格、数量/箱、件数、毛重、净重、箱规</li>
+<li>汇总行：总件数、总毛重、总净重、总体积（CBM）</li>
+<li>来源：装箱清单表</li>
+</ul>
+<h4 id="821">8.2.1 生成逻辑（关键：单证一致）</h4>
+<h5 id="_3">法律依据</h5>
+<table>
+<thead>
+<tr>
+<th>来源</th>
+<th>核心要求</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>《海关法》第二十四条</td>
+<td>收发货人应向海关如实申报，交验单证。各单证间不得存在矛盾。</td>
+</tr>
+<tr>
+<td>《报关单填制规范》</td>
+<td>"单、证相符"：报关单各栏目内容必须与合同、发票、<strong>装箱单</strong>、提单相符。</td>
+</tr>
+<tr>
+<td>海关合规实操</td>
+<td><strong>品名无矛盾 → 分量可追溯 → 总量必相等 → 单位可换算</strong></td>
+</tr>
+</tbody>
+</table>
+<h5 id="_4">合规结论（全网查证）</h5>
+<p>海关对装箱单与报关单的一致性要求<strong>不是逐行死板对应</strong>，而是遵循<strong>逻辑闭合</strong>原则：</p>
+<table>
+<thead>
+<tr>
+<th>层面</th>
+<th>要求</th>
+<th>本系统实现</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>品名</strong></td>
+<td>实质含义一致（文字微调允许）</td>
+<td>PACKING LIST 品名 = 商品表 <code>name_en</code>，报关单品名 = <code>hs_name</code>。系统需校验二者来自同一商品编码，不允许矛盾</td>
+</tr>
+<tr>
+<td><strong>行级数量</strong></td>
+<td>逻辑对应，允许合并/拆分</td>
+<td>✅ 装箱单逐箱明细 → 报关单按HS归并，属于"多箱合并一项"的合规情形</td>
+</tr>
+<tr>
+<td><strong>总量（件数）</strong></td>
+<td><strong>必须绝对一致</strong></td>
+<td>PL总件数 = 报关草单 <code>SUM(qty)</code> → ERROR阻断</td>
+</tr>
+<tr>
+<td><strong>重量</strong></td>
+<td>合计一致（允许计量尾差）</td>
+<td><code>|PL毛重 - 报关草单毛重| / 报关草单毛重 ≤ 0.5%</code></td>
+</tr>
+<tr>
+<td><strong>法定计量单位</strong></td>
+<td>必须一致</td>
+<td>自动引用商品表法定单位，如需换算则标记</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>合规情形示例</strong>（引用海关合规分析）：<br />
+- ✅ 装箱单 Box1=1000, Box2=1000, Box3=1000 → 报关单合并为 1行×3000 —— 合规<br />
+- ✅ 装箱单 Box1含 A500 + B500 → 报关单拆为 A行500 + B行500 —— 合规<br />
+- ❌ 装箱单合计2500，报关单申报3000 → <strong>绝对不允许</strong>，退单/布控/处罚</p>
+</blockquote>
+<h5 id="_5">生成策略</h5>
+<p>PACKING LIST <strong>不从合并数据生成</strong>，而是从4.4简易装箱清单逐箱明细独立生成。</p>
+<table>
+<thead>
+<tr>
+<th>走合并数据</th>
+<th>走逐箱明细（本系统采用）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>合并后箱号丢失，无法还原逐箱内容</td>
+<td>保留每个纸箱的完整内容（SKU/数量/重量）</td>
+</tr>
+<tr>
+<td>无法对应实际纸箱，货代无法核对装柜</td>
+<td>真实反映打包情况，货代/海关可逐箱核对</td>
+</tr>
+<tr>
+<td>与报关单行级强行对应，无法律依据</td>
+<td>汇总行与报关单总量一致，法律合规 + 单货相符</td>
+</tr>
+</tbody>
+</table>
+<h5 id="_6">生成流程</h5>
+<pre class="codehilite"><code>4.4 装箱清单表（原始逐箱数据）
+    │
+    ▼
+【第一层】逐箱明细 (Box-level Detail)
+  Box 1  │  SKU-A ×5, SKU-B ×3  │  60×40×30  │  G.W.18.5  │  N.W.16.2
+  Box 2  │  SKU-A ×2, SKU-C ×10 │  60×40×30  │  G.W.19.1  │  N.W.17.0
+  Box 3  │  SKU-B ×8            │  60×40×30  │  G.W.15.0  │  N.W.13.5
+  ...
+    │
+    ▼
+【第二层】合并显示清单 (Consolidated Display List)
+  按 HS 编码归集，合并同品名多箱明细：
+
+  HS编码    品名(EN)                 总数量    涉及箱数    总毛重    总净重    总体积
+  6402.99    SKU-A (Sport Shoes)      7        2箱         37.6      33.2      0.144
+  6402.99    SKU-B (Casual Shoes)     11       2箱         33.5      29.7      0.144
+  6404.19    SKU-C (Textile Shoes)    10       1箱         19.1      17.0      0.072
+                                    ─────────
+                                    合计 28 件            90.2      79.9      0.360
+    │
+    ▼
+【第三层】同报关草单交叉校验（关键合规层）
+  ├─ 合并显示清单 总数量(28) == 报关草单 SUM(qty)(28) ✅
+  ├─ 合并显示清单 总毛重(90.2) ≈ 报关草单总毛重（允差±0.5%） ✅
+  ├─ 合并显示清单 总净重(79.9) ≈ 报关草单总净重（允差±0.5%） ✅
+  ├─ 合并显示清单 HS行数 == 报关草单 HS行数（仅WARNING，不阻断） ⚠️
+  └─ 不一致 → 标红 ERROR，阻断生成
+</code></pre>
+
+<h5 id="_7">合并显示清单说明</h5>
+<p><strong>为什么需要合并显示清单？</strong></p>
+<p>在实际报关场景中，海关审核 PACKING LIST 时看的不是逐箱明细，而是按品名归集后的汇总视图。逐箱明细是仓库/货代核对装柜用的；合并显示清单才是海关比对报关单的核心参照。</p>
+<table>
+<thead>
+<tr>
+<th>层次</th>
+<th>内容</th>
+<th>受众</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>逐箱明细</td>
+<td>每个纸箱的SKU/数量/重量</td>
+<td>仓库人员、货代装柜核对</td>
+</tr>
+<tr>
+<td><strong>合并显示清单</strong></td>
+<td>按HS归集，品名+总量+箱数统计</td>
+<td><strong>海关审核、报关行比对</strong></td>
+</tr>
+<tr>
+<td>总计行</td>
+<td>整票货的总箱数/总毛重/总净重/总体积</td>
+<td>提单、舱单对照</td>
+</tr>
+</tbody>
+</table>
+<p><strong>合并规则：</strong></p>
+<ul>
+<li><strong>归集键</strong>：<code>HS编码 + 商品名称(name_en)</code> — 同一HS编码下的不同SKU显示为独立行</li>
+<li><strong>数量合计</strong>：同一归集键下所有箱中的数量求和</li>
+<li><strong>涉及箱数</strong>：该品名出现在多少个不同的箱号中（混装箱会被计数多次）</li>
+<li><strong>毛重/净重合计</strong>：同一归集键下各箱的毛重/净重求和</li>
+<li><strong>体积合计</strong>：箱规 × 涉及箱数（同品名同箱规时）；不同箱规时按实际逐箱累加</li>
+<li><strong>合并显示清单合计行</strong>：所有归集行的数量/毛重/净重/体积求和</li>
+</ul>
+<p><strong>混装箱在合并显示清单中的处理</strong>：</p>
+<pre class="codehilite"><code>示例：Box 5（混装箱）含 SKU-A ×3 + SKU-B ×4
+
+逐箱明细中：
+  Box 5  │  SKU-A ×3, SKU-B ×4  │  60×40×30  │  G.W.20.0  │  N.W.18.0  │  0.072 CBM
+
+合并显示清单中：
+  SKU-A      总数量  3  ← 从Box 5拆出    涉及箱数  1（Box 5）
+  SKU-B      总数量  4  ← 从Box 5拆出    涉及箱数  1（Box 5）
+
+  注意：合并显示清单的毛重/净重/体积是逐箱分拆的估计值，
+  实际混装箱内各SKU的重量按数量比例分摊：
+    SKU-A分摊毛重 = 20.0 × 3/(3+4) ≈ 8.57
+    SKU-B分摊毛重 = 20.0 × 4/(3+4) ≈ 11.43
+</code></pre>
+
+<p><strong>合并显示清单输出模板</strong>：</p>
+<pre class="codehilite"><code>═══════════════════════════════════════════════════════════════
+                 PACKING LIST — CONSOLIDATED DISPLAY
+═══════════════════════════════════════════════════════════════
+Inv No.: INV-202606-001                  Date: 2026-06-16
+Shipper: JINGTAILAN IMPORT &amp; EXPORT CO., LTD.
+Consignee: (依报关草单)
+═══════════════════════════════════════════════════════════════
+No.  HS Code      Description                    Qty   CTNS   G.W.(kg)  N.W.(kg)  CBM
+───────────────────────────────────────────────────────────────────────────────
+ 1   6402.99.00   SKU-A Sport Shoes (Leather)     7      2      37.6      33.2    0.144
+ 2   6402.99.00   SKU-B Casual Shoes (Leather)    11      2      33.5      29.7    0.144
+ 3   6404.19.00   SKU-C Textile Shoes             10      1      19.1      17.0    0.072
+───────────────────────────────────────────────────────────────────────────────
+     TOTAL:                                       28      5      90.2      79.9    0.360
+═══════════════════════════════════════════════════════════════════════════════
+</code></pre>
+
+<h5 id="_8">校验规则</h5>
+<table>
+<thead>
+<tr>
+<th>校验项</th>
+<th>规则</th>
+<th>失败处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>品名一致性</td>
+<td>PL品名与报关草单品名来自同一商品编码，无矛盾</td>
+<td>ERROR，阻断</td>
+</tr>
+<tr>
+<td>总件数一致</td>
+<td>合并显示清单总数量 = 报关草单 <code>SUM(qty)</code></td>
+<td><strong>ERROR，阻断</strong>（违反海关法，不可放行）</td>
+</tr>
+<tr>
+<td>总毛重一致</td>
+<td><code>|合并显示清单总毛重 - 报关草单总毛重| / 报关草单总毛重 ≤ 0.5%</code></td>
+<td>WARNING，提示核对</td>
+</tr>
+<tr>
+<td>总净重一致</td>
+<td>同上</td>
+<td>WARNING</td>
+</tr>
+<tr>
+<td>HS行数比较</td>
+<td>合并显示清单行数 vs 报关草单HS行数</td>
+<td>WARNING（不等时提示，不阻断——混装/拆分属正常差异）</td>
+</tr>
+<tr>
+<td>总体积</td>
+<td>PL有、报关草单无此字段 → 仅PL展示</td>
+<td>不校验</td>
+</tr>
+<tr>
+<td>逐箱合计 = 合并合计</td>
+<td>逐箱明细 SUM(毛重/净重/数量) == 合并显示清单合计行</td>
+<td><strong>ERROR，阻断</strong>（内部数据不一致）</td>
+</tr>
+<tr>
+<td>截断申报要素联动</td>
+<td>若报关草单中某行使用了「截断+等字」方案（第13章），PL合并显示清单对应品名行的SKU数应与草单截断前缀一致</td>
+<td>WARNING，提示核对截断是否遗漏关键SKU</td>
+</tr>
+</tbody>
+</table>
+<p><strong>混装箱重量分摊精度说明：</strong></p>
+<pre class="codehilite"><code>混装箱各SKU的毛重/净重按数量比例分摊，为估计值：
+  - 分摊公式：SKU_i分摊毛重 = 整箱毛重 × (SKU_i数量 / 箱内总数量)
+  - 允差范围：分项加总 = 箱总重（数学等式必成立），但各项真实值 ±3% 内可接受
+  - 注意：如果各SKU单位重量差异很大（如鞋子 vs 配饰），
+    比例分摊误差会增大，建议尽量不分装重量差异大的SKU混装
+</code></pre>
+
+<blockquote>
+<p><strong>核心原则</strong>：PACKING LIST 三层结构——逐箱明细（仓库核实） → 合并显示清单（海关审核） → 总计行（单证对照），<strong>行级不必对应</strong>（箱级≠HS级），但<strong>总量闭合必须成立</strong>。海关法要求的是"单证之间不得矛盾"，不是"单证之间格式相同"。</p>
+</blockquote>
+<h3 id="83-export-invoice">8.3 出口发票（Export Invoice）</h3>
+<ul>
+<li>价格依据：申报价公式</li>
+<li>内容：发票号、发票日期、买卖双方信息、品名（英文）、数量、单价、总价</li>
+<li>货币：与结汇方式对应</li>
+</ul>
+<h3 id="84-sales-contract">8.4 销售合同（Sales Contract）</h3>
+<ul>
+<li>模板：可维护多个合同模板（不同目的国 / 不同贸易方式）</li>
+<li>自动填充：买卖双方、合同号、商品明细、付款方式、装运条款</li>
+<li>合同号规则：<code>SC-{年月}-{流水号}</code>，如 <code>SC-202606-001</code></li>
+</ul>
+<h3 id="85">8.5 国内采购合同</h3>
+<ul>
+<li><strong>模板策略</strong>：B组自定义格式 → 支持上传 <code>docx</code> 模板（含 <code>{{变量}}</code> 占位），也可使用系统默认模板</li>
+<li>买方：井太蘭（或指定出口主体）</li>
+<li>卖方：对应供应商</li>
+<li>内容：采购品名（中文）、数量、不含税单价、总价（含税）、付款方式</li>
+<li>合同号规则：<code>PC-{年月}-{流水号}</code></li>
+<li>合规要求：需与增值税发票对应，配合退税三流</li>
+<li><strong>签属方式</strong>：优先<strong>电子签</strong>（可对接腾讯电子签，已有Token配置），现阶段保留纸质盖章作为过渡方案</li>
+<li><strong>小规模纳税人标记</strong>：供应商为小规模纳税人时，合同显眼位置标注提醒关务二次确认</li>
+</ul>
+<h4 id="851">8.5.1 增值税发票关联（退税三流关键环节）</h4>
+<blockquote>
+<p><strong>法律依据</strong>：国家税务总局《出口货物劳务增值税和消费税管理办法》——进项增值税发票的品名、规格型号必须与报关单品名一致。三流一致（合同流、发票流、货物流）是退税审核的硬性核心标准。</p>
+</blockquote>
+<p><strong>发票录入界面：</strong></p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>控件</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>关联采购合同</td>
+<td>下拉选择</td>
+<td>从8.5生成的国内采购合同中选择</td>
+</tr>
+<tr>
+<td>发票号码</td>
+<td>文本</td>
+<td>增值税发票编号（20位）</td>
+</tr>
+<tr>
+<td>开票日期</td>
+<td>日期</td>
+<td>增值税发票开具日期</td>
+</tr>
+<tr>
+<td>发票金额（含税）</td>
+<td>金额</td>
+<td>发票价税合计</td>
+</tr>
+<tr>
+<td>税率</td>
+<td>下拉</td>
+<td>13% / 9% / 6% / 3%（小规模）</td>
+</tr>
+<tr>
+<td>发票金额（不含税）</td>
+<td>自动计算</td>
+<td>含税 / (1+税率)</td>
+</tr>
+<tr>
+<td>供应商名称</td>
+<td>自动带入</td>
+<td>从采购合同继承</td>
+</tr>
+<tr>
+<td>发票附件</td>
+<td>文件上传</td>
+<td>PDF/图片</td>
+</tr>
+</tbody>
+</table>
+<p><strong>退税三流自动校验：</strong></p>
+<table>
+<thead>
+<tr>
+<th>校验项</th>
+<th>规则</th>
+<th>失败处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>品名一致</strong></td>
+<td>发票商品名称 = 报关单品名（中文）</td>
+<td><strong>ERROR，阻断</strong>——品名不一致是退税高频疑点</td>
+</tr>
+<tr>
+<td><strong>规格一致</strong></td>
+<td>发票规格型号 = 报关单规格型号</td>
+<td><strong>ERROR，阻断</strong></td>
+</tr>
+<tr>
+<td><strong>数量闭合</strong></td>
+<td>发票数量 ≥ 报关单数量（允许多票发票对应一票报关）</td>
+<td>WARNING（发票多对一属正常）</td>
+</tr>
+<tr>
+<td><strong>金额闭合</strong></td>
+<td>发票不含税总额 ≥ 报关单总申报价（可多票对一票）</td>
+<td>WARNING</td>
+</tr>
+<tr>
+<td><strong>单位一致</strong></td>
+<td>发票计量单位 = 报关单法定第一单位</td>
+<td><strong>ERROR，阻断</strong></td>
+</tr>
+<tr>
+<td><strong>供应商匹配</strong></td>
+<td>发票供应商 = 报关单合并前提供应商</td>
+<td>ERROR</td>
+</tr>
+</tbody>
+</table>
+<p><strong>特殊处理：小规模纳税人发票</strong></p>
+<pre class="codehilite"><code>if 供应商.纳税人类型 == &quot;小规模纳税人&quot;:
+    税率自动设为 3%（或现行小规模税率）
+    系统标注 ⚠️「小规模纳税人发票，不可退税」
+    该发票对应的报关单在退税申报时会被税务机关剔除
+</code></pre>
+
+<p><strong>查询视图</strong>：报关单 → 关联采购合同 → 关联增值税发票，支持穿透查询完整退税证据链。</p>
+<h3 id="86">8.6 入库单</h3>
+<ul>
+<li><strong>模板策略</strong>：B组自定义格式 → 可上传模板或使用系统默认格式</li>
+<li>内容：供应商名称、入库日期、商品编码、品名、数量、单价、备注</li>
+<li>关联：对应璞景仓储入库操作</li>
+<li>规则：每张报关单对应一张或多张入库单（按供应商分开）</li>
+</ul>
+<h3 id="87">8.7 关货单</h3>
+<ul>
+<li><strong>模板策略</strong>：B组自定义格式 → 可上传模板或使用系统默认格式</li>
+<li>内容：出仓日期、货物描述、箱数、毛重、提货地址、目的地</li>
+<li>用途：仓库出货操作凭证</li>
+</ul>
+<h3 id="88-invoice">8.8 对外 INVOICE（客户版）</h3>
+<ul>
+<li><strong>模板策略</strong>：B组自定义格式 → 支持上传客户指定模板；无上传则用系统内置标准模板</li>
+<li>语言：全英文</li>
+<li>价格：与申报价一致（使用同一公式计算，确保退税三流一致）</li>
+<li>货币：通常为 USD 或 EUR</li>
+<li>内容：Your Reference / Invoice No. / Date / Buyer / Seller / Item / Description / Qty / Unit Price / Amount / Terms / Port of Loading / Port of Discharge</li>
+</ul>
+<hr />
+<h3 id="89">8.9 单一窗口对接方案</h3>
+<h4 id="891">8.9.1 对接架构</h4>
+<pre class="codehilite"><code>关务管理系统 → 导出标准XML报文 → 关务人员登录单一窗口手动上传
+                                  ⋮
+                        （未来升级：API直连）
+                                  ⋮
+                        单一窗口 → 海关H2018通关系统
+                                  ⋮
+                        海关回执 ← 系统接收并更新状态
+</code></pre>
+
+<h4 id="892">8.9.2 当前阶段：手动上传模式</h4>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>对接方式</td>
+<td>系统生成标准XML报文 → 人工登录单一窗口上传</td>
+</tr>
+<tr>
+<td>数据格式</td>
+<td>海关H2018版式XML（含表头+表体+集装箱+随附单证）</td>
+</tr>
+<tr>
+<td>报文类型</td>
+<td>出口货物报关单报文</td>
+</tr>
+<tr>
+<td>认证方式</td>
+<td>企业IC卡 / E-key（单一窗口端）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>导出文件清单（一次导出）：</strong><br />
+| 文件 | 格式 | 用途 |<br />
+|------|------|------|<br />
+| 报关单XML报文 | .xml | 上传单一窗口申报 |<br />
+| 报关单PDF预览 | .pdf | 人工核对 |<br />
+| PACKING LIST | .pdf | 随附单证上传 |<br />
+| INVOICE | .pdf | 随附单证上传 |<br />
+| 销售合同 | .pdf | 随附单证上传（如需） |</p>
+<h4 id="893">8.9.3 回执处理</h4>
+<table>
+<thead>
+<tr>
+<th>回执状态</th>
+<th>含义</th>
+<th>系统处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>接受</td>
+<td>海关已接受申报</td>
+<td>状态 → 「申报中(DECLARED)」</td>
+</tr>
+<tr>
+<td>退单</td>
+<td>申报数据不合规，退回修改</td>
+<td>状态 → 「草稿(DRAFT)」，标记退单原因</td>
+</tr>
+<tr>
+<td>查验</td>
+<td>海关布控查验</td>
+<td>状态 → 「查验中(INSPECTING)」</td>
+</tr>
+<tr>
+<td>放行</td>
+<td>海关放行</td>
+<td>状态 → 「放行(RELEASED)」，记录放行日期</td>
+</tr>
+<tr>
+<td>删单</td>
+<td>申报人申请删除</td>
+<td>状态 → 「已删除(DELETED)」</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>回执录入方式</strong>：现阶段由关务人员手动在系统中更新回执状态（勾选+备注）；后续可升级为单一窗口API回执自动同步。</p>
+</blockquote>
+<h4 id="894">8.9.4 未来升级路径</h4>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>内容</th>
+<th>前提条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>阶段一（当前）</td>
+<td>导出XML + 人工上传 + 手动回写状态</td>
+<td>—</td>
+</tr>
+<tr>
+<td>阶段二</td>
+<td>API直连：系统直接调用单一窗口接口申报</td>
+<td>企业开通单一窗口API权限、系统对接开发</td>
+</tr>
+<tr>
+<td>阶段三</td>
+<td>全自动：申报+回执+放行全链路自动化</td>
+<td>阶段二稳定运行6个月以上</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="9">9. 状态流转设计</h2>
+<h3 id="91">9.1 报关草单状态定义</h3>
+<pre class="codehilite"><code>草稿（Draft）
+  │
+  ├── 提交审核 → 待审核（Pending Review），触达关务主管
+  │
+  ▼ 审核通过
+已确认（Confirmed）
+  │
+  ├── 修改申请（逆向）→ 草稿（Draft）← 仅限「已确认」之前
+  │
+  ▼ 提交申报（导出单一窗口）
+申报中（Declared）
+  │
+  ├── 退单（海关）→ 草稿（Draft）← 标记退单原因，需重新修改
+  ├── 查验 → 查验中（Under Inspection）
+  │              └── 放行 → 放行（Released）
+  │
+  ▼ 正常放行
+放行（Released）
+  │
+  ├── 修改申请（已放行后）→ 修改中（Amending）→ 海关审核 → 放行（Released）
+  │                                         └── 驳回 → 放行（Released，保持原状态）
+  │
+  ▼ 单证齐全 + 退税申报完毕
+已归档（Archived）
+  │
+  ▼（可作废）
+已作废（Voided）← 仅限「放行」之前操作，需双人复核
+</code></pre>
+
+<p><strong>状态流转规则：</strong></p>
+<table>
+<thead>
+<tr>
+<th>当前状态</th>
+<th>允许操作</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>草稿</td>
+<td>提交审核</td>
+<td>所有必填字段完整</td>
+</tr>
+<tr>
+<td>待审核</td>
+<td>审核通过 / 驳回</td>
+<td>双人复核（6.3）</td>
+</tr>
+<tr>
+<td>已确认</td>
+<td>提交申报 / 修改回退</td>
+<td>修改回退需主管审批</td>
+</tr>
+<tr>
+<td>申报中</td>
+<td>等待回执</td>
+<td>可手动更新回执状态</td>
+</tr>
+<tr>
+<td>放行</td>
+<td>修改申请(amending) / 归档</td>
+<td>修改须填写变更原因</td>
+</tr>
+<tr>
+<td>归档</td>
+<td>只读</td>
+<td>不可再修改</td>
+</tr>
+<tr>
+<td>已作废</td>
+<td>只读</td>
+<td>保留审计日志</td>
+</tr>
+</tbody>
+</table>
+<h3 id="92">9.2 状态变更日志</h3>
+<p>每次状态变更记录：<br />
+- 变更时间<br />
+- 操作人<br />
+- 变更前状态 → 变更后状态<br />
+- 操作类型（提交/审核/驳回/修改/退单/放行/归档/作废）<br />
+- 备注（必填——退单原因/驳回原因/修改说明等）<br />
+- 关联复核人（涉及双人复核时）<br />
+- IP地址（审计追溯）</p>
+<blockquote>
+<p><strong>AEO数据留存要求</strong>：状态日志保留 ≥5年（高级认证）或 ≥3年（一般认证），不可删除，支持一键导出审计报告。</p>
+</blockquote>
+<h3 id="93">9.3 报关行协作流程</h3>
+<h4 id="931">9.3.1 协作模式</h4>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>说明</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>自有报关</strong></td>
+<td>关务人员登录单一窗口自行申报</td>
+<td>关务团队直接操作</td>
+</tr>
+<tr>
+<td><strong>委托报关行</strong></td>
+<td>系统导出文件包 → 发送报关行 → 报关行上传单一窗口</td>
+<td>委托专业报关行代理申报</td>
+</tr>
+</tbody>
+</table>
+<h4 id="932">9.3.2 委托报关行数据传递</h4>
+<p><strong>导出文件包（一键打包）：</strong><br />
+- 报关单 XML 报文<br />
+- 报关草单 PDF（预览核对用）<br />
+- PACKING LIST PDF<br />
+- INVOICE PDF<br />
+- 销售合同 PDF<br />
+- 随附单证（装箱清单、品牌授权书等，如有）</p>
+<p><strong>传递方式：</strong><br />
+- 系统内置邮件发送（SMTP配置 → 自动发送到报关行指定邮箱）<br />
+- 或导出ZIP包 → 关务人员手动通过微信/QQ/邮件发送</p>
+<p><strong>状态同步：</strong><br />
+- 报关行完成申报后 → 邮件回复回执截图<br />
+- 关务人员在系统中手动更新状态 + 上传回执截图<br />
+- 系统记录「委托报关行：XX公司，联系窗口：XXX，发送时间：XXXX，确认时间：XXXX」</p>
+<hr />
+<h2 id="10">10. 校验规则汇总</h2>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>校验项</th>
+<th>规则</th>
+<th>错误级别</th>
+<th>处理方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>V-01</td>
+<td>目的国一致性</td>
+<td>多选订单目的国必须相同</td>
+<td>ERROR</td>
+<td>实时阻止</td>
+</tr>
+<tr>
+<td>V-02</td>
+<td>商品审批状态</td>
+<td>报关商品需为「已审批」</td>
+<td>ERROR</td>
+<td>生成前校验</td>
+</tr>
+<tr>
+<td>V-03</td>
+<td>HS编码格式</td>
+<td>必须为10位数字</td>
+<td>ERROR</td>
+<td>维护时校验</td>
+</tr>
+<tr>
+<td>V-04</td>
+<td>申报要素字符数</td>
+<td>合并后 ≤ 250字符</td>
+<td>WARNING/ERROR</td>
+<td>提示+选项</td>
+</tr>
+<tr>
+<td>V-05</td>
+<td>申报行数</td>
+<td>≤ 50行（H2000标准）</td>
+<td>ERROR</td>
+<td>提示切换策略</td>
+</tr>
+<tr>
+<td>V-06</td>
+<td>小规模+不合规</td>
+<td>禁止生成</td>
+<td>ERROR</td>
+<td>硬性拦截</td>
+</tr>
+<tr>
+<td>V-07</td>
+<td>小规模+合规</td>
+<td>二次确认</td>
+<td>WARNING</td>
+<td>弹窗确认</td>
+</tr>
+<tr>
+<td>V-08</td>
+<td>合并前提（供应商+原产地）</td>
+<td>不同供应商/原产地不可合并</td>
+<td>ERROR</td>
+<td>自动分组</td>
+</tr>
+<tr>
+<td>V-09</td>
+<td>申报价公式缺失</td>
+<td>无可用公式时</td>
+<td>ERROR</td>
+<td>提示配置</td>
+</tr>
+<tr>
+<td>V-10</td>
+<td>装箱清单完整性</td>
+<td>所有订单行必须有箱号</td>
+<td>ERROR</td>
+<td>生成前校验</td>
+</tr>
+<tr>
+<td>V-11</td>
+<td>报关单-INCOTERMS一致</td>
+<td>销售合同INCOTERMS = 报关单成交方式</td>
+<td>ERROR</td>
+<td>生成草单时校验</td>
+</tr>
+<tr>
+<td>V-12</td>
+<td>品名一致（退税三流）</td>
+<td>增值税发票品名 = 报关单品名</td>
+<td>ERROR</td>
+<td>退税申报前校验</td>
+</tr>
+<tr>
+<td>V-13</td>
+<td>集装箱号完整</td>
+<td>海运/空运时集装箱号不为空</td>
+<td>ERROR</td>
+<td>申报前校验</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="11_1">11. 数据库关键表设计（参考）</h2>
+<pre class="codehilite"><code class="language-sql">-- 报关商品信息表
+CREATE TABLE customs_goods (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+    approval_status ENUM('PENDING','APPROVED','REJECTED'),
+    hs_code         VARCHAR(10) NOT NULL,
+    name_zh         VARCHAR(200) NOT NULL,
+    name_en         VARCHAR(200) NOT NULL,
+    declaration_elements TEXT,
+    item_no         VARCHAR(100),   -- 款号
+    spec            VARCHAR(200),
+    spec_group      VARCHAR(100),
+    qty_per_unit    DECIMAL(10,4),
+    gross_weight    DECIMAL(10,4),
+    net_weight      DECIMAL(10,4),
+    volume          DECIMAL(10,6),
+    unit            VARCHAR(10),
+    pkg_unit        VARCHAR(10),
+    biz_sku_code    VARCHAR(50) UNIQUE,  -- 对应聚水潭SKU
+    tax_refund_rate DECIMAL(5,2),
+    created_at      DATETIME,
+    updated_at      DATETIME
+);
+
+-- 供应商表
+CREATE TABLE suppliers (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+    supplier_code   VARCHAR(50) UNIQUE NOT NULL,
+    name_zh         VARCHAR(200),
+    name_en         VARCHAR(200),
+    tax_no          VARCHAR(18),
+    taxpayer_type   ENUM('GENERAL','SMALL_SCALE'),
+    compliance_status ENUM('COMPLIANT','NON_COMPLIANT','PENDING'),
+    origin          VARCHAR(50),      -- 原产地
+    can_doc_export  BOOLEAN GENERATED AS (
+                        taxpayer_type = 'GENERAL' OR 
+                        (taxpayer_type = 'SMALL_SCALE' AND compliance_status IN ('COMPLIANT', 'PENDING'))
+                    ) STORED,
+    created_at      DATETIME
+);
+
+-- 报关草单主表
+CREATE TABLE customs_declarations (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+    decl_no         VARCHAR(50) UNIQUE,  -- 草单编号
+    status          ENUM('DRAFT','PENDING_REVIEW','CONFIRMED','DECLARED','INSPECTING','RELEASED','ARCHIVED'),
+    dest_country    VARCHAR(10),         -- 目的国代码
+    dest_port       VARCHAR(20),
+    trade_mode      VARCHAR(20),
+    transport_mode  VARCHAR(20),
+    merge_strategy  ENUM('MERGE_HS','MERGE_HS_NAME','MERGE_HS_NAME_SKU',
+                         'MERGE_HS_NAME_STYLE','MERGE_HS_NAME_STYLE_MATERIAL',
+                         'MERGE_HS_NAME_MATERIAL','NO_MERGE'),
+    price_formula_id BIGINT,
+    created_by      VARCHAR(50),
+    created_at      DATETIME,
+    updated_at      DATETIME
+);
+
+-- 报关草单明细表
+CREATE TABLE customs_declaration_lines (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+    decl_id         BIGINT NOT NULL REFERENCES customs_declarations(id),
+    line_no         INT NOT NULL,       -- 1~50
+    hs_code         VARCHAR(10),
+    name_zh         VARCHAR(200),
+    declaration_elements VARCHAR(250), -- ≤250字符
+    qty             DECIMAL(12,4),
+    unit            VARCHAR(10),
+    unit_price      DECIMAL(15,4),
+    total_price     DECIMAL(15,4),
+    currency        VARCHAR(3),
+    origin_country  VARCHAR(10),
+    dest_country    VARCHAR(10)
+);
+</code></pre>
+
+<hr />
+<h3 id="_9">国内运费配置表</h3>
+<pre class="codehilite"><code class="language-sql">-- 国内运费配置表
+CREATE TABLE domestic_freight_config (
+    id               BIGINT PRIMARY KEY AUTO_INCREMENT,
+    config_level      ENUM('GLOBAL','SUPPLIER','ORDER'),
+    supplier_code    VARCHAR(50),
+    transport_mode    VARCHAR(20),
+    dest_country     VARCHAR(10),
+    calc_mode        ENUM('FIXED','BY_WEIGHT','BY_VOLUME'),
+    unit_price       DECIMAL(10,2),
+    fixed_amount     DECIMAL(10,2),
+    effective_date   DATE NOT NULL,
+    expiry_date      DATE,
+    created_at       DATETIME,
+    FOREIGN KEY (supplier_code) REFERENCES suppliers(supplier_code)
+);
+</code></pre>
+
+<hr />
+<h3 id="_10">装箱清单表</h3>
+<pre class="codehilite"><code class="language-sql">-- 装箱清单表（仓库简易装箱清单，4.4节）
+CREATE TABLE packing_list_raw (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+    internal_order_no VARCHAR(50) NOT NULL,
+    box_no          VARCHAR(20) NOT NULL,
+    biz_sku_code    VARCHAR(50) NOT NULL,
+    qty             DECIMAL(10,0) NOT NULL,
+    carton_spec     VARCHAR(50),
+    gross_weight    DECIMAL(10,3) NOT NULL,
+    net_weight      DECIMAL(10,3) NOT NULL,
+    is_mixed        BOOLEAN DEFAULT FALSE,
+    created_by      VARCHAR(50),
+    created_at      DATETIME,
+    UNIQUE KEY uk_order_box_sku (internal_order_no, box_no, biz_sku_code)
+);
+</code></pre>
+
+<h3 id="_11">状态变更日志表</h3>
+<pre class="codehilite"><code class="language-sql">CREATE TABLE status_change_logs (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+    decl_id         BIGINT NOT NULL REFERENCES customs_declarations(id),
+    from_status     VARCHAR(20),
+    to_status       VARCHAR(20),
+    action_type     VARCHAR(30) NOT NULL,
+    operator_id     VARCHAR(50) NOT NULL,
+    operator_ip     VARCHAR(45),
+    reviewer_id     VARCHAR(50),
+    remark          TEXT NOT NULL,
+    created_at      DATETIME NOT NULL,
+    INDEX idx_decl_id (decl_id)
+);
+</code></pre>
+
+<h3 id="-">订单-草单关联 + 集装箱 + 增值税发票表</h3>
+<pre class="codehilite"><code class="language-sql">CREATE TABLE order_decl_links (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+    internal_order_no VARCHAR(50) NOT NULL,
+    decl_id         BIGINT NOT NULL REFERENCES customs_declarations(id),
+    UNIQUE KEY uk_order_decl (internal_order_no, decl_id)
+);
+
+CREATE TABLE container_info (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+    decl_id         BIGINT NOT NULL REFERENCES customs_declarations(id),
+    container_no    VARCHAR(20) NOT NULL,
+    container_type  ENUM('20GP','40GP','40HQ','45HQ'),
+    seal_no         VARCHAR(20),
+    loading_date    DATE,
+    created_at      DATETIME
+);
+
+CREATE TABLE vat_invoices (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+    invoice_no      VARCHAR(20) NOT NULL UNIQUE,
+    contract_id     BIGINT,
+    supplier_code   VARCHAR(50) NOT NULL REFERENCES suppliers(supplier_code),
+    issue_date      DATE NOT NULL,
+    total_amount    DECIMAL(15,2) NOT NULL,
+    tax_rate        DECIMAL(5,2) NOT NULL,
+    amount_no_tax   DECIMAL(15,2),
+    attachment_path VARCHAR(500),
+    created_by      VARCHAR(50),
+    created_at      DATETIME
+);
+</code></pre>
+
+<hr />
+<h2 id="12_1">12. 开放问题与待确认事项</h2>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>问题</th>
+<th>优先级</th>
+<th>负责人</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q-01</td>
+<td>聚水潭API：已对接过，技术上无难度（已确认）</td>
+<td>-</td>
+<td>已确认</td>
+</tr>
+<tr>
+<td>Q-02</td>
+<td>报关草单导出：对接单一窗口/通关系统（已确认）</td>
+<td>-</td>
+<td>已确认</td>
+</tr>
+<tr>
+<td>Q-03</td>
+<td>申报行数上限50行：全国统一（已查证，见第14章）</td>
+<td>-</td>
+<td>已确认</td>
+</tr>
+<tr>
+<td>Q-04</td>
+<td>对外INVOICE价格=申报价（同一公式计算，已确认）</td>
+<td>-</td>
+<td>已确认</td>
+</tr>
+<tr>
+<td>Q-05</td>
+<td>国内采购合同签订：电子签优先，现阶段保留纸质（已确认）</td>
+<td>-</td>
+<td>已确认</td>
+</tr>
+<tr>
+<td>Q-06</td>
+<td>入库单/送货单暂不对接璞景WMS（已确认）</td>
+<td>-</td>
+<td>已确认</td>
+</tr>
+<tr>
+<td>Q-07</td>
+<td>国内运费：系统单独维护（见3.5节，已确认）</td>
+<td>-</td>
+<td>已确认</td>
+</tr>
+<tr>
+<td>Q-08</td>
+<td>申报要素截断+等字：保留方案，法规说明见第13章（已确认）</td>
+<td>-</td>
+<td>已确认</td>
+</tr>
+<tr>
+<td>Q-09</td>
+<td>拆单逻辑：系统自动推荐+人工确认（见第15章，已确认）</td>
+<td>-</td>
+<td>已确认</td>
+</tr>
+<tr>
+<td>Q-10</td>
+<td>部署方式：本地私有化（见第16章，已确认）</td>
+<td>-</td>
+<td>已确认</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<hr />
+<h2 id="13">13. 申报要素截断合规说明</h2>
+<h3 id="131">13.1 法规依据</h3>
+<ol>
+<li>
+<p><strong>《中华人民共和国海关进出口货物报关单填制规范》</strong>（海关总署公告2019年第18号）规定：<br />
+   - 申报要素应完整、准确填写，不得遗漏。<br />
+   - 商品名称、规格型号等字段应与实际货物一致。</p>
+</li>
+<li>
+<p><strong>《海关进出口货物申报管理规定》</strong>（海关总署令第103号）规定：<br />
+   - 收发货人或其代理人应按照海关规定的格式和要求如实申报。<br />
+   - 申报内容应当真实、准确、完整。</p>
+</li>
+</ol>
+<h3 id="132-250">13.2 250字符限制的来源</h3>
+<ul>
+<li>海关H2000系统对「商品规格型号」字段的技术限制为250个中文字符（含标点）。</li>
+<li>此限制为系统字段长度约束，非法规明文规定。</li>
+<li>超长会导致系统无法接收申报数据。</li>
+</ul>
+<h3 id="133">13.3 「截断+等字」方案的合规风险分析</h3>
+<table>
+<thead>
+<tr>
+<th>风险等级</th>
+<th>情形</th>
+<th>海关可能处置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>低风险</td>
+<td>款号较多，截断后加「等」字，保留部分已能唯一识别商品</td>
+<td>通常接受，前提是品名+HS编码已能识别</td>
+</tr>
+<tr>
+<td>中风险</td>
+<td>截断部分包含材质、成分等关键申报要素</td>
+<td>可能要求补充申报，或影响归类认定</td>
+</tr>
+<tr>
+<td>高风险</td>
+<td>截断后导致申报要素与实物严重不符，或故意隐瞒关键信息</td>
+<td>涉嫌申报不实，可能面临行政处罚（海关法第86条）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="134">13.4 建议操作规范</h3>
+<ol>
+<li><strong>优先采用更细粒度合并策略</strong>，避免触发250字符限制。</li>
+<li>如确需截断，应满足：<br />
+   - 保留部分已能完整描述商品关键特征（品名、材质、用途）<br />
+   - 「等」字仅用于表示「同款其他颜色/尺码」，不得用于省略不同款号</li>
+<li><strong>在系统操作日志中保留完整款号清单</strong>，以备海关核查时提供补充材料。</li>
+<li>建议在首次采用此方案时，<strong>提前与申报口岸海关沟通确认</strong>。</li>
+</ol>
+<h3 id="135">13.5 结论</h3>
+<p>「截断+等字」方案在法规上<strong>无明文禁止</strong>，但存在<strong>口岸执行尺度差异</strong>。系统应保留此方案作为应急选项，但需：<br />
+- 在界面显著位置提示风险<br />
+- 要求关务人员确认后方可执行<br />
+- 保留完整申报要素（未截断版）备查</p>
+<hr />
+<h2 id="14-50">14. 申报行数50项全国统一查证</h2>
+<h3 id="141">14.1 查证方法</h3>
+<p>对以下三个来源进行了交叉验证：</p>
+<table>
+<thead>
+<tr>
+<th>来源</th>
+<th>查证内容</th>
+<th>结论</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>《报关单填制规范》（海关总署公告2019年第18号）全文</td>
+<td>逐条检索「50」「五十项」「上限」</td>
+<td><strong>无明文规定</strong> — 填制规范不限制申报项数</td>
+</tr>
+<tr>
+<td>行业实务资料（thecustoms.com.cn 等）</td>
+<td>2016年改版报道</td>
+<td>单份报关单从20项提升至50项，属「重大改版」</td>
+</tr>
+<tr>
+<td>中国国际贸易单一窗口</td>
+<td>系统架构</td>
+<td>全国统一平台，一点接入、全国通关</td>
+</tr>
+</tbody>
+</table>
+<h3 id="142">14.2 核心结论</h3>
+<p><strong>50项限制是H2000/H2010通关管理系统的技术参数，非法规条文。</strong></p>
+<p>推理链：<br />
+1. 《报关单填制规范》中没有对申报项数做任何数量限制<br />
+2. 50项来自H2000系统数据库设计时的字段分配（每份报关单最多存储50条商品记录）<br />
+3. 中国国际贸易单一窗口是<strong>全国统一平台</strong>（「一点接入、全国通关」），所有口岸使用同一套系统后端<br />
+4. 因此，<strong>50项限制对所有口岸统一适用</strong>，不存在口岸差异</p>
+<h3 id="143">14.3 法规依据（间接）</h3>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>相关内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>海关总署公告2016年第20号</td>
+<td>修订《报关单填制规范》，同步升级H2000系统，单份报关单商品项上限从20项→50项</td>
+</tr>
+<tr>
+<td>海关总署公告2019年第18号</td>
+<td>最新版填制规范（现行有效），未对项数做限制</td>
+</tr>
+<tr>
+<td>海关总署公告2024年第30号</td>
+<td>调整申报要求，未涉及项数上限变更</td>
+</tr>
+<tr>
+<td>海关总署公告2026年第40号</td>
+<td>最新调整出口货物报关单申报项目，未改项数限制</td>
+</tr>
+</tbody>
+</table>
+<h3 id="144">14.4 实务影响</h3>
+<ul>
+<li>系统设计以<strong>50项/单</strong>为硬性约束是正确的</li>
+<li>超过50项必须拆分为多份报关单，这是<strong>系统强制</strong>，无申诉空间</li>
+<li>未来若单一窗口系统升级扩大上限，可通过配置调整</li>
+</ul>
+<hr />
+<h2 id="15">15. 拆单逻辑推荐方案</h2>
+<h3 id="151">15.1 设计原则</h3>
+<p>当合并后申报行数超过50项时，系统需自动拆分为多份报关单。推荐 <strong>「自动推荐 + 人工确认」</strong> 双轨模式。</p>
+<h3 id="152">15.2 自动推荐拆单优先级</h3>
+<p>按以下优先级依次拆分，直至每份报关单 ≤50项：</p>
+<table>
+<thead>
+<tr>
+<th>优先级</th>
+<th>拆分维度</th>
+<th>说明</th>
+<th>合规依据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>P1</strong></td>
+<td>供应商</td>
+<td>同一供应商的商品放在同一份报关单中</td>
+<td>供应商不一致无法合并申报（发票流一致）</td>
+</tr>
+<tr>
+<td><strong>P2</strong></td>
+<td>最终目的国/目的港</td>
+<td>同一目的港放在同一份</td>
+<td>报关单「运抵国」字段唯一</td>
+</tr>
+<tr>
+<td><strong>P3</strong></td>
+<td>HS编码章类（2位）</td>
+<td>同章类商品归入同一份</td>
+<td>便于海关归类审核</td>
+</tr>
+<tr>
+<td><strong>P4</strong></td>
+<td>HS编码（完整）</td>
+<td>同HS编码尽量不拆分</td>
+<td>避免同一编码出现在两份报关单中</td>
+</tr>
+</tbody>
+</table>
+<h3 id="153">15.3 拆单结果界面</h3>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>报关单编号（草单）</th>
+<th>供应商</th>
+<th>目的港</th>
+<th>商品项数</th>
+<th>总毛重</th>
+<th>总金额</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>CD-20260616-001</td>
+<td>供应商A</td>
+<td>LOS ANGELES</td>
+<td>48</td>
+<td>3,200kg</td>
+<td>$156,000</td>
+<td>✅ 确认 / ✏️ 调整 / ❌ 作废</td>
+</tr>
+<tr>
+<td>2</td>
+<td>CD-20260616-002</td>
+<td>供应商B</td>
+<td>LOS ANGELES</td>
+<td>35</td>
+<td>1,850kg</td>
+<td>$89,500</td>
+<td>✅ 确认 / ✏️ 调整 / ❌ 作废</td>
+</tr>
+</tbody>
+</table>
+<h3 id="154">15.4 人工调整方式</h3>
+<p>用户可以对系统推荐的拆分结果进行以下调整：</p>
+<ul>
+<li><strong>手动重新选择合并策略</strong>：回到合并规则引擎，换一种合并方式重新生成</li>
+<li><strong>手动拖拽调整</strong>：在拆分结果界面拖拽商品行到不同报关单</li>
+<li><strong>手动拆单</strong>：直接指定哪些内部订单号归入第N份报关单</li>
+</ul>
+<h3 id="155">15.5 硬性约束</h3>
+<ul>
+<li>每份报关单商品项数 ≤ 50项（H2000系统强制）</li>
+<li>每份报关单「申报要素（规格型号）」总字符数 → 系统不设统一上限，但单行 ≤ 250字符</li>
+<li>同一份报关单内供应商必须一致、原产地必须一致</li>
+</ul>
+<hr />
+<h2 id="16">16. 部署方式推荐</h2>
+<h3 id="161">16.1 方案对比</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>云端SaaS</th>
+<th>本地私有化</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>初始投入</strong></td>
+<td>0~3万（配置费）</td>
+<td>10~20万（服务器+部署+初始化）</td>
+</tr>
+<tr>
+<td><strong>年运营成本</strong></td>
+<td>5~15万（按用户数/订单量）</td>
+<td>1~3万（服务器电费+运维）</td>
+</tr>
+<tr>
+<td><strong>3年总成本</strong></td>
+<td>15~48万</td>
+<td>13~29万</td>
+</tr>
+<tr>
+<td><strong>5年总成本</strong></td>
+<td>25~75万</td>
+<td>15~35万</td>
+</tr>
+<tr>
+<td><strong>数据安全</strong></td>
+<td>数据存储在云服务商，依赖SLA</td>
+<td>数据完全在企业内网，自主可控</td>
+</tr>
+<tr>
+<td><strong>合规风险</strong></td>
+<td>报关数据含商业敏感信息（成本价、供应商、客户），上云需评估</td>
+<td>无数据传输风险，符合税务/海关合规要求</td>
+</tr>
+<tr>
+<td><strong>系统更新</strong></td>
+<td>服务商自动更新</td>
+<td>需IT人员或服务商上门</td>
+</tr>
+<tr>
+<td><strong>定制灵活性</strong></td>
+<td>受限于SaaS平台框架</td>
+<td>完全自主，可深度对接内部系统</td>
+</tr>
+<tr>
+<td><strong>访问速度</strong></td>
+<td>依赖互联网带宽</td>
+<td>内网访问，延迟最低</td>
+</tr>
+</tbody>
+</table>
+<h3 id="162">16.2 推荐：本地私有化部署</h3>
+<p><strong>推荐理由（按重要性排序）：</strong></p>
+<ol>
+<li><strong>数据敏感度极高</strong>：报关数据包含：供应商进价（商业机密）、客户售价、退税率、HS编码归类和申报要素。一旦泄露可直接暴露整个供应链成本和利润结构。</li>
+<li><strong>税务合规要求</strong>：退税申报涉及三流一致验证，数据链路需要可审计。本地部署便于保留完整操作日志，满足税务局核查要求。</li>
+<li><strong>长期成本更低</strong>：按5年周期计算，本地部署比SaaS节省约40~50%（15~35万 vs 25~75万）。</li>
+<li><strong>可与现有系统集成</strong>：聚水潭API已打通、电子签系统（腾讯电子签）已有，本地部署可直接对接内网环境。</li>
+<li><strong>不受外部服务中断影响</strong>：单一窗口系统本身是外部依赖，若报关系统再依赖云端SaaS，双重外部依赖风险叠加。</li>
+</ol>
+<h3 id="163">16.3 推荐配置</h3>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>最低配置</th>
+<th>推荐配置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>应用服务器</td>
+<td>4核8G，200G SSD</td>
+<td>8核16G，500G SSD</td>
+</tr>
+<tr>
+<td>数据库服务器</td>
+<td>4核8G，500G SSD（RAID1）</td>
+<td>8核16G，1TB SSD（RAID5）</td>
+</tr>
+<tr>
+<td>操作系统</td>
+<td>CentOS 7+ / Ubuntu 20.04+</td>
+<td>Ubuntu 22.04 LTS</td>
+</tr>
+<tr>
+<td>数据库</td>
+<td>MySQL 8.0</td>
+<td>MySQL 8.0 + Redis缓存</td>
+</tr>
+<tr>
+<td>备份策略</td>
+<td>每日全量备份</td>
+<td>每日增量 + 每周全量，异地存储</td>
+</tr>
+</tbody>
+</table>
+<p><strong>预计初始投入：12~18万</strong>（含服务器硬件、操作系统、数据库授权、基础部署）</p>
+<h3 id="164">16.4 如预算严格受限的备选方案</h3>
+<p>若初始资金紧张，可考虑<strong>过渡方案</strong>：<br />
+- 第一阶段（0~6个月）：单台高性能工作站部署（8核16G），预算 <strong>1~2万</strong><br />
+- 第二阶段（6~12个月）：迁移至专用服务器，预算追加至完整方案</p>
+<hr />
+<h2 id="17">17. 附录：所有问题确认状态汇总</h2>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>问题</th>
+<th>结论</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q-01</td>
+<td>聚水潭API</td>
+<td>已对接过，无难度</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Q-02</td>
+<td>报关草单导出</td>
+<td>对接单一窗口/通关系统</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Q-03</td>
+<td>申报行数50项</td>
+<td>全国统一，H2000技术约束（见第14章）</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Q-04</td>
+<td>对外INVOICE价格</td>
+<td>= 申报价</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Q-05</td>
+<td>国内采购合同签订</td>
+<td>电子签优先，保留纸质过渡</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Q-06</td>
+<td>璞景WMS对接</td>
+<td>暂不需要</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Q-07</td>
+<td>国内运费</td>
+<td>系统单独维护（见3.5节）</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Q-08</td>
+<td>截断+等字</td>
+<td>保留方案（见第13章）</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Q-09</td>
+<td>拆单逻辑</td>
+<td>自动推荐+人工确认（见第15章）</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Q-10</td>
+<td>部署方式</td>
+<td>推荐本地私有化（见第16章）</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Q-11</td>
+<td>国内采购合同电子签</td>
+<td>可对接腾讯电子签（已有）</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Q-12</td>
+<td>系统名称</td>
+<td>待定</td>
+<td>🔲 待定</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="18">18. 权限与安全模型</h2>
+<h3 id="181-aeo">18.1 角色定义（AEO合规要求）</h3>
+<p>依据海关AEO认证标准，系统需实现分级授权与岗位权责分离。</p>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>权限范围</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>关务主管</strong></td>
+<td>全部权限</td>
+<td>审核草单、确认运输方式、系统配置、用户管理、HS编码库维护、查看全部数据</td>
+</tr>
+<tr>
+<td><strong>关务操作员</strong></td>
+<td>业务操作</td>
+<td>录入商品、生成草单、确认运输方式、生成单证、查看合规报告、补录物流单证</td>
+</tr>
+<tr>
+<td><strong>仓库管理员</strong></td>
+<td>装箱管理</td>
+<td>录入/上传装箱清单、确认毛重/体积、查看订单列表。<strong>不可修改草单和单证</strong></td>
+</tr>
+<tr>
+<td><strong>财务</strong></td>
+<td>财务数据</td>
+<td>查看采购合同/发票/报关单、录入增值税发票、配置运费保费、导出退税数据</td>
+</tr>
+<tr>
+<td><strong>只读</strong></td>
+<td>仅查看</td>
+<td>管理层/审计人员，查看所有数据，不可任何修改</td>
+</tr>
+<tr>
+<td><strong>管理员</strong></td>
+<td>系统管理</td>
+<td>用户管理、角色分配、HS编码库导入、系统参数配置、备份管理</td>
+</tr>
+</tbody>
+</table>
+<h3 id="182">18.2 权限控制矩阵</h3>
+<table>
+<thead>
+<tr>
+<th>功能模块</th>
+<th style="text-align: center;">关务主管</th>
+<th style="text-align: center;">关务操作员</th>
+<th style="text-align: center;">仓库管理员</th>
+<th style="text-align: center;">财务</th>
+<th style="text-align: center;">只读</th>
+<th style="text-align: center;">管理员</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>商品信息维护</td>
+<td style="text-align: center;">CRUD</td>
+<td style="text-align: center;">CRU</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">—</td>
+</tr>
+<tr>
+<td>供应商管理</td>
+<td style="text-align: center;">CRUD</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">—</td>
+</tr>
+<tr>
+<td>生成报关草单</td>
+<td style="text-align: center;">CRUD</td>
+<td style="text-align: center;">CRUD</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">—</td>
+</tr>
+<tr>
+<td>审核草单</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+</tr>
+<tr>
+<td>装箱清单录入</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">CRUD</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">—</td>
+</tr>
+<tr>
+<td>运输方式确认</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+</tr>
+<tr>
+<td>生成单证</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+</tr>
+<tr>
+<td>增值税发票录入</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">CRUD</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">—</td>
+</tr>
+<tr>
+<td>运费保费配置</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">CRUD</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">—</td>
+</tr>
+<tr>
+<td>HS编码库维护</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">—</td>
+</tr>
+<tr>
+<td>用户管理</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">CRUD</td>
+</tr>
+<tr>
+<td>系统配置</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">CRUD</td>
+</tr>
+</tbody>
+</table>
+<h3 id="183">18.3 操作日志与审计</h3>
+<blockquote>
+<p>AEO认证要求：系统须实现「可查询、可记录、可分析、可预警、可追溯」。</p>
+</blockquote>
+<p><strong>日志记录范围：</strong></p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>记录内容</th>
+<th>保留年限</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>业务操作</td>
+<td>草单创建/修改/提交/审核/作废</td>
+<td>≥5年</td>
+</tr>
+<tr>
+<td>单证操作</td>
+<td>单证生成/导出/打印</td>
+<td>≥5年</td>
+</tr>
+<tr>
+<td>数据变更</td>
+<td>商品/供应商/参数的新增/修改/删除</td>
+<td>≥5年</td>
+</tr>
+<tr>
+<td>权限变更</td>
+<td>用户创建/角色变更/密码重置</td>
+<td>≥5年</td>
+</tr>
+<tr>
+<td>登录日志</td>
+<td>登录/登出/登录失败</td>
+<td>≥1年</td>
+</tr>
+</tbody>
+</table>
+<p><strong>每条日志记录：</strong><br />
+- 操作时间（精确到秒）<br />
+- 操作人（用户ID + 姓名）<br />
+- 操作IP地址<br />
+- 操作类型（增/删/改/查/审核/导出）<br />
+- 操作对象（表名 + 记录ID）<br />
+- 变更内容（before/after JSON，数据变更时）<br />
+- 操作结果（成功/失败）</p>
+<h3 id="184">18.4 数据留存与防篡改</h3>
+<table>
+<thead>
+<tr>
+<th>要求</th>
+<th>实现方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作日志不可删除</td>
+<td>日志表无DELETE权限（仅管理员可归档超出保留期的日志到只读文件）</td>
+</tr>
+<tr>
+<td>单证历史版本保留</td>
+<td>每次修改生成新版本，旧版本标记为历史但不可删除</td>
+</tr>
+<tr>
+<td>数据库备份</td>
+<td>每日增量备份 + 每周全量备份 + 异地存储</td>
+</tr>
+<tr>
+<td>数据导出审计</td>
+<td>所有数据导出操作记录（导出人/时间/范围/文件名）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>文档结束 · 12个开放问题全部关闭 · v1.10完成境外收货人字段增强+聚水潭映射逻辑 · 系统可进入详细设计阶段</em></p>
+  </main>
+</div>
+<script>
+(function() {
+  const content = document.querySelector('.content');
+  const toc = document.getElementById('toc');
+  const headings = content.querySelectorAll('h1, h2, h3, h4');
+  const ul = document.createElement('ul');
+  headings.forEach(function(h) {
+    var li = document.createElement('li');
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    li.appendChild(a);
+    if (h.tagName === 'H3' || h.tagName === 'H4') li.classList.add('sub');
+    if (h.tagName === 'H4') li.style.paddingLeft = '24px';
+    ul.appendChild(li);
+  });
+  toc.appendChild(ul);
+  document.querySelectorAll('table').forEach(function(t) {
+    if (!t.parentElement.classList.contains('table-wrapper')) {
+      var wrapper = document.createElement('div');
+      wrapper.classList.add('table-wrapper');
+      t.parentNode.insertBefore(wrapper, t);
+      wrapper.appendChild(t);
+    }
+  });
+})();
+</script>
+</body>
+</html>
